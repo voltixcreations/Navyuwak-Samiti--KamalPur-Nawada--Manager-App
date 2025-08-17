@@ -1,932 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Navyuvak Samiti (Kamalpur) – Admin Donation Management</title>
-
-  <!-- TailwindCSS CDN -->
+  <meta charset="UTF-8">
+  <title>Navyuvak Samiti - Donation Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    .accordion-content { display: none; }
-    .accordion.open .accordion-content { display: block; }
-    td.editing { background:#fffceb; outline:none; }
-    .chip { display:inline-block; padding:.15rem .5rem; border-radius:.5rem; background:#eef2ff; font-size:.75rem; }
-    .btn-secondary { background:#e5e7eb; }
-    .btn-secondary:hover { background:#d1d5db; }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
-
-  <!-- ============================ LOGIN ============================ -->
-  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
-      <div class="text-center mb-6">
-        <img src="nsk.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
-        <h1 class="text-2xl font-bold">🔐 Admin Login</h1>
-        <p class="text-sm text-gray-500">Navyuvak Samiti (Kamalpur)</p>
-      </div>
-      <form id="loginForm" class="space-y-4">
-        <input id="email" type="email" placeholder="Admin Email"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        <input id="password" type="password" placeholder="Password"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition">
-          Login
-        </button>
-      </form>
-      <p class="mt-4 text-xs text-center text-gray-500">
-        Tip: Enable Email/Password auth in Firebase and create your admin user.
-      </p>
-    </div>
-  </section>
-
-  <!-- ============================ DASHBOARD ============================ -->
-  <section id="dashboardSection" class="hidden">
-    <!-- Topbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img src="nsk.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
-          <div>
-            <h2 class="text-xl font-bold">📊 Navyuvak Samiti Kamalpur – Admin Dashboard</h2>
-            <p class="text-xs text-gray-500">Donation Management</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span id="userEmail" class="text-xs text-gray-500"></span>
-          <button id="logoutBtn"
-                  class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm">Logout</button>
-        </div>
-      </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto p-4 space-y-6">
-      <!-- ====== Analytics ====== -->
-      <section class="bg-white rounded-xl shadow">
-        <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>📈 Analytics</span>
-            <span class="chip">Auto-updates with filters</span>
-          </button>
-          <div class="accordion-content px-6 pb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div class="bg-blue-50 p-4 rounded-lg text-center">
-                <div id="statTotalCount" class="text-3xl font-bold">0</div>
-                <div class="text-sm text-gray-600">Total Donations</div>
-              </div>
-              <div class="bg-green-50 p-4 rounded-lg text-center">
-                <div id="statTotalAmount" class="text-3xl font-bold">₹0</div>
-                <div class="text-sm text-gray-600">Total Amount</div>
-              </div>
-              <div class="bg-yellow-50 p-4 rounded-lg text-center">
-                <div id="statToday" class="text-3xl font-bold">0 (₹0)</div>
-                <div class="text-sm text-gray-600">Today</div>
-              </div>
-              <div class="bg-indigo-50 p-4 rounded-lg text-center">
-                <div id="statByEvent" class="text-sm font-mono overflow-y-auto max-h-24"></div>
-                <div class="text-sm text-gray-600 mt-1">Donations by Event</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====== Donation Records ====== -->
-      <section class="bg-white rounded-xl shadow">
-        <div class="accordion open">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🧾 Donation Records</span>
-            <span class="chip">Add + Filter + Edit + Export</span>
-          </button>
-          <div class="accordion-content px-6 pb-6">
-            <!-- Add Donation -->
-            <div class="bg-gray-50 border rounded-xl p-4 mb-4">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold">➕ Add Donation</h3>
-                <span class="text-xs text-gray-500">IST & Auto TRX ID</span>
-              </div>
-              <form id="donationForm" class="grid grid-cols-1 md:grid-cols-5 gap-3">
-                <input id="donorName" class="p-3 border rounded-lg" placeholder="Donor Name" required>
-                <input id="amount" type="number" min="1" step="1" class="p-3 border rounded-lg" placeholder="Amount (₹)" required>
-
-                <select id="event" class="p-3 border rounded-lg" required></select>
-
-                <select id="paymentMethod" class="p-3 border rounded-lg" required>
-                  <option value="Cash">Cash</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                </select>
-
-                <!-- Auto-filled IST Date/Time, editable -->
-                <div class="md:col-span-2">
-                  <label class="text-xs text-gray-500 block mb-1">Date & Time (IST)</label>
-                  <input id="dateTimeInput" type="datetime-local" class="p-3 border rounded-lg w-full">
-                </div>
-
-                <input id="phone" class="p-3 border rounded-lg" placeholder="Phone (optional)">
-                <input id="emailDonor" type="email" class="p-3 border rounded-lg" placeholder="Email (optional)">
-                <input id="address" class="md:col-span-2 p-3 border rounded-lg" placeholder="Address (optional)">
-
-                <button type="submit"
-                        class="md:col-span-5 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">
-                  Save Donation
-                </button>
-              </form>
-            </div>
-
-            <!-- Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3">
-              <input id="searchText" class="p-3 border rounded-lg" placeholder="Search donor / phone / email">
-              <select id="filterEvent" class="p-3 border rounded-lg"></select>
-              <div>
-                <label class="text-xs text-gray-500 block mb-1">Start Date (IST)</label>
-                <input id="startDate" type="date" class="p-3 border rounded-lg w-full">
-              </div>
-              <div>
-                <label class="text-xs text-gray-500 block mb-1">End Date (IST)</label>
-                <input id="endDate" type="date" class="p-3 border rounded-lg w-full">
-              </div>
-              <div class="flex gap-2">
-                <button id="applyFilters" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-3 rounded-lg">Apply</button>
-                <button id="clearFilters" class="flex-1 btn-secondary text-gray-800 px-3 py-3 rounded-lg">Clear</button>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap gap-2 mb-3">
-              <button id="downloadCSV"
-                      class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm">
-                Download CSV (filtered)
-              </button>
-              <button id="downloadPDF"
-                      class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">
-                Download PDF Report (filtered)
-              </button>
-              <span id="recordsCount" class="text-xs text-gray-500 self-center"></span>
-            </div>
-
-            <!-- Donation Table -->
-            <div class="overflow-x-auto border rounded-lg">
-              <table class="min-w-full">
-                <thead class="bg-gray-50 text-xs">
-                  <tr>
-                    <th class="px-3 py-2 text-left">Txn ID</th>
-                    <th class="px-3 py-2 text-left">Date (IST)</th>
-                    <th class="px-3 py-2 text-left">Donor</th>
-                    <th class="px-3 py-2 text-left">₹ Amount</th>
-                    <th class="px-3 py-2 text-left">Event</th>
-                    <th class="px-3 py-2 text-left">Method</th>
-                    <th class="px-3 py-2 text-left">Phone</th>
-                    <th class="px-3 py-2 text-left">Email</th>
-                    <th class="px-3 py-2 text-left">Address</th>
-                    <th class="px-3 py-2 text-left">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="donationTableBody" class="text-sm"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====== Event Management ====== -->
-      <section class="bg-white rounded-xl shadow">
-        <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🎉 Event Management</span>
-            <span class="chip">Active events appear in forms</span>
-          </button>
-          <div class="accordion-content px-6 pb-6">
-            <form id="eventForm" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-              <input id="eventName" class="p-3 border rounded-lg" placeholder="Event Name" required>
-              <select id="eventStatus" class="p-3 border rounded-lg">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">Add Event</button>
-            </form>
-
-            <div class="overflow-x-auto border rounded-lg">
-              <table class="min-w-full">
-                <thead class="bg-gray-50 text-xs">
-                  <tr>
-                    <th class="px-3 py-2 text-left">Event Name</th>
-                    <th class="px-3 py-2 text-left">Status</th>
-                    <th class="px-3 py-2 text-left">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="eventsTableBody" class="text-sm"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====== Data Management ====== -->
-      <section class="bg-white rounded-xl shadow">
-        <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🧹 Data Management</span>
-            <span class="chip">Danger zone</span>
-          </button>
-          <div class="accordion-content px-6 pb-6">
-            <div class="space-y-3">
-              <button id="resetCounterBtn"
-                      class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg">
-                Reset Transaction Counter
-              </button>
-              <button id="restoreDefaultEventsBtn"
-                      class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg">
-                Restore Default Events
-              </button>
-              <button id="clearAllDataBtn"
-                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
-                Clear ALL Donations & Non-default Events
-              </button>
-              <div class="text-xs text-gray-500">
-                Defaults: "Saraswati Puja", "General Fund", "Other" (Active)
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </section>
-
-  <!-- Firebase v8 SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Login Page -->
+  <div id="loginPage" class="flex items-center justify-center h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <h2 class="text-2xl font-bold text-center mb-4">Admin Login</h2>
+      <input type="text" id="username" placeholder="Username" class="w-full border p-2 mb-3 rounded">
+      <input type="password" id="password" placeholder="Password" class="w-full border p-2 mb-3 rounded">
+      <button onclick="login()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Login</button>
+      <p class="text-sm text-gray-500 mt-3 text-center">Demo Credentials:<br>Username: <b>adminnsk</b><br>Password: <b>durgeshadmin2010</b></p>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="dashboard" class="hidden min-h-screen">
+    <header class="bg-blue-600 text-white p-4 flex items-center">
+      <img src="nsk.jpg" alt="Logo" class="h-10 w-10 mr-3 rounded-full border">
+      <h1 class="text-xl font-bold">Navyuvak Samiti (Kamalpur) - Admin Dashboard</h1>
+    </header>
+
+    <main class="p-6 space-y-6">
+      <!-- Donation Records -->
+      <section class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-lg font-bold mb-4">1. Donation Records</h2>
+        <form id="donationForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <input type="text" id="donorName" placeholder="Donor Name" class="border p-2 rounded" required>
+          <input type="number" id="amount" placeholder="Donation Amount (₹)" class="border p-2 rounded" required>
+          <select id="event" class="border p-2 rounded">
+            <option value="Saraswati Puja">Saraswati Puja</option>
+            <option value="General Fund">General Fund</option>
+            <option value="Other">Other</option>
+          </select>
+          <select id="paymentMethod" class="border p-2 rounded">
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Bank Transfer</option>
+          </select>
+          <input type="text" id="phone" placeholder="Phone (optional)" class="border p-2 rounded">
+          <input type="email" id="email" placeholder="Email (optional)" class="border p-2 rounded">
+          <input type="text" id="address" placeholder="Address (optional)" class="border p-2 rounded">
+        </form>
+        <button onclick="addDonation()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Donation</button>
+        <table class="w-full border mt-4 text-sm">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border p-2">Txn ID</th>
+              <th class="border p-2">Date</th>
+              <th class="border p-2">Donor</th>
+              <th class="border p-2">Amount</th>
+              <th class="border p-2">Event</th>
+              <th class="border p-2">Payment</th>
+              <th class="border p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="donationTable"></tbody>
+        </table>
+      </section>
+
+      <!-- Event Management -->
+      <section class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-lg font-bold mb-4">2. Event Management</h2>
+        <div class="flex space-x-2 mb-3">
+          <input type="text" id="newEvent" placeholder="Event Name" class="border p-2 rounded flex-grow">
+          <button onclick="addEvent()" class="bg-blue-600 text-white px-4 py-2 rounded">Add Event</button>
+        </div>
+        <ul id="eventList" class="list-disc pl-5"></ul>
+      </section>
+
+      <!-- Analytics -->
+      <section class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-lg font-bold mb-4">3. Analytics</h2>
+        <p>Total Donations: <span id="totalDonations">0</span></p>
+        <p>Total Amount: ₹<span id="totalAmount">0</span></p>
+      </section>
+
+      <!-- Data Management -->
+      <section class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-lg font-bold mb-4">4. Data Management</h2>
+        <button onclick="clearData()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Clear All Data</button>
+      </section>
+    </main>
+  </div>
 
   <script>
-    // ================== Firebase Config ==================
-    const firebaseConfig = {
-      apiKey: "AIzaSyBk9kfv9_rzcxgyxf60A92UDgOWSLYsdh8",
-      authDomain: "donation-management-8598a.firebaseapp.com",
-      projectId: "donation-management-8598a",
-      storageBucket: "donation-management-8598a.appspot.com",
-      messagingSenderId: "616961540877",
-      appId: "1:616961540877:web:37d56aa10381807aaf2644",
-      measurementId: "G-11TNRYNWRK"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const adminUser = "adminnsk";
+    const adminPass = "durgeshadmin2010";
 
-    // ================== UI & State ==================
-    const loginSection = document.getElementById('loginSection');
-    const dashboardSection = document.getElementById('dashboardSection');
-    const userEmailEl = document.getElementById('userEmail');
+    let donations = [];
+    let events = ["Saraswati Puja", "General Fund", "Other"];
+    let transactionCounter = 1;
 
-    // Accordions
-    document.querySelectorAll('.toggle-acc').forEach(btn=>{
-      btn.addEventListener('click', ()=>btn.parentElement.classList.toggle('open'));
-    });
-
-    // IST helpers & money
-    const pad = n => String(n).padStart(2,'0');
-    function toISTISOString(d = new Date()) {
-      const utc = d.getTime() + d.getTimezoneOffset()*60000;
-      const ist = new Date(utc + 5.5*3600000);
-      return `${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())}:${pad(ist.getSeconds())}+05:30`;
-    }
-    // For datetime-local input value (no seconds, no TZ)
-    function istLocalForInput(d = new Date()) {
-      const utc = d.getTime() + d.getTimezoneOffset()*60000;
-      const ist = new Date(utc + 5.5*3600000);
-      return `${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())}`;
-    }
-    function inputToISTISO(inputVal) {
-      // from "YYYY-MM-DDTHH:mm" → add ":00+05:30"
-      if (!inputVal) return toISTISOString();
-      return `${inputVal}:00+05:30`;
-    }
-    function formatINR(n) { return new Intl.NumberFormat('en-IN').format(Number(n||0)); }
-
-    // Collections
-    const donationsCol = () => db.collection('donations');
-    const eventsCol    = () => db.collection('events');
-    const metaDoc      = () => db.collection('meta').doc('counters');
-
-    // State caches
-    let allDonations = [];
-    let filtered = [];
-    let allEvents = [];
-    let logoDataUrl = null; // base64 for receipts
-
-    // ================== Auth Flow ==================
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        loginSection.classList.add('hidden');
-        dashboardSection.classList.remove('hidden');
-        userEmailEl.textContent = user.email || '';
-
-        await preloadLogo();
-        await ensureDefaultEvents();
-        await refreshAll();
-        // default date-time in form
-        document.getElementById('dateTimeInput').value = istLocalForInput();
-        renderAfterFilters();
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === adminUser && p === adminPass) {
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        renderEvents();
+        renderDonations();
       } else {
-        loginSection.classList.remove('hidden');
-        dashboardSection.classList.add('hidden');
-        userEmailEl.textContent = '';
-      }
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(err => alert('Login failed: ' + err.message));
-    });
-    document.getElementById('logoutBtn').addEventListener('click', ()=>auth.signOut());
-
-    // ================== Preload logo for receipts ==================
-    async function preloadLogo() {
-      try {
-        const img = await loadImage('nsk.jpg');
-        logoDataUrl = imageToDataURL(img);
-      } catch (e) {
-        console.warn('Logo load failed, receipts will be without logo.', e);
-        logoDataUrl = null;
-      }
-    }
-    function loadImage(src) {
-      return new Promise((resolve, reject) => {
-        const im = new Image();
-        im.crossOrigin = 'anonymous';
-        im.onload = ()=>resolve(im);
-        im.onerror = reject;
-        im.src = src + (src.includes('?') ? '&' : '?') + 'cachebust=' + Date.now();
-      });
-    }
-    function imageToDataURL(img) {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      return canvas.toDataURL('image/jpeg'); // nsk.jpg
-    }
-
-    // ================== Default Events ==================
-    async function ensureDefaultEvents() {
-      const defaults = ["Saraswati Puja","General Fund","Other"];
-      const snaps = await eventsCol().get();
-      if (snaps.empty) {
-        for (const name of defaults) {
-          await eventsCol().add({ name, status: "Active", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        }
+        alert("Invalid Credentials");
       }
     }
 
-    // ================== Loaders ==================
-    async function refreshAll() {
-      const [dSnap, eSnap] = await Promise.all([
-        donationsCol().orderBy('createdAt','desc').get(),
-        eventsCol().orderBy('name').get()
-      ]);
-      allDonations = dSnap.docs.map(d=>({ id:d.id, ...d.data() }));
-      allEvents    = eSnap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderEventsUI();
-    }
-
-    // ================== Donation: Create ==================
-    const donationForm = document.getElementById('donationForm');
-    donationForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const donorName = document.getElementById('donorName').value.trim();
-      const amount = Number(document.getElementById('amount').value);
-      const eventId = document.getElementById('event').value;
-      const paymentMethod = document.getElementById('paymentMethod').value;
-      const dateTimeInput = document.getElementById('dateTimeInput').value; // "YYYY-MM-DDTHH:mm"
-      const phone = document.getElementById('phone').value.trim();
-      const emailDonor = document.getElementById('emailDonor').value.trim();
-      const address = document.getElementById('address').value.trim();
-
-      if (!donorName || !amount || !eventId) return alert('Please fill Donor, Amount, and Event');
-
-      try {
-        const transactionId = await nextTransactionId();
-        const dateTimeISO = inputToISTISO(dateTimeInput);
-        const eventName = (allEvents.find(e=>e.id===eventId)||{}).name || '';
-
-        await donationsCol().add({
-          transactionId, dateTimeISO,
-          donorName, amount, event: eventName, eventId,
-          paymentMethod, phone, email: emailDonor, address,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        await refreshAll();
-        renderAfterFilters();
-        donationForm.reset();
-        document.getElementById('dateTimeInput').value = istLocalForInput(); // re-seed IST now
-
-        // Auto-generate receipt
-        const just = allDonations.find(x=>x.transactionId===transactionId);
-        if (just) generateReceiptPDF(just);
-
-      } catch(err){ alert('Failed to save: ' + err.message); }
-    });
-
-    async function nextTransactionId() {
-      let trxNum = 0;
-      await db.runTransaction(async (tx)=>{
-        const snap = await tx.get(metaDoc());
-        if (!snap.exists) {
-          tx.set(metaDoc(), { lastTrx: 0 });
-          trxNum = 1;
-        } else {
-          const last = Number(snap.data().lastTrx||0);
-          trxNum = last + 1;
-          tx.update(metaDoc(), { lastTrx: trxNum });
-        }
-      });
-      return `TRX-${String(trxNum).padStart(3,'0')}`;
-    }
-
-    // ================== Donation: Table/Filters ==================
-    const tableBody = document.getElementById('donationTableBody');
-    const recordsCount = document.getElementById('recordsCount');
-    const searchText = document.getElementById('searchText');
-    const filterEvent = document.getElementById('filterEvent');
-    const startDate = document.getElementById('startDate');
-    const endDate = document.getElementById('endDate');
-    document.getElementById('applyFilters').addEventListener('click', renderAfterFilters);
-    document.getElementById('clearFilters').addEventListener('click', ()=>{
-      searchText.value = ''; filterEvent.value=''; startDate.value=''; endDate.value='';
-      renderAfterFilters();
-    });
-
-    function applyClientFilters() {
-      const q = (searchText.value||'').trim().toLowerCase();
-      const ev = filterEvent.value;
-      const sd = startDate.value ? new Date(startDate.value+'T00:00:00Z') : null;
-      const ed = endDate.value ? new Date(endDate.value+'T23:59:59Z') : null;
-
-      filtered = allDonations.filter(d=>{
-        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}`.toLowerCase();
-        if (q && !hay.includes(q)) return false;
-        if (ev && d.eventId !== ev) return false;
-        const when = new Date(d.dateTimeISO.replace('+05:30','Z'));
-        if (sd && when < sd) return false;
-        if (ed && when > ed) return false;
-        return true;
-      });
-    }
-
-    function renderTable() {
-      tableBody.innerHTML = '';
-      filtered.forEach(d=>{
-        const tr = document.createElement('tr');
-        tr.className = 'border-b hover:bg-gray-50';
-
-        tr.innerHTML = `
-          <td class="px-3 py-2">${d.transactionId||''}</td>
-          <td class="px-3 py-2" data-field="dateTimeISO" data-id="${d.id}">${d.dateTimeISO||''}</td>
-          <td class="px-3 py-2" data-field="donorName"  data-id="${d.id}">${d.donorName||''}</td>
-          <td class="px-3 py-2" data-field="amount"     data-id="${d.id}">${d.amount||''}</td>
-          <td class="px-3 py-2" data-field="event"      data-id="${d.id}">${d.event||''}</td>
-          <td class="px-3 py-2" data-field="paymentMethod" data-id="${d.id}">${d.paymentMethod||''}</td>
-          <td class="px-3 py-2" data-field="phone"      data-id="${d.id}">${d.phone||''}</td>
-          <td class="px-3 py-2" data-field="email"      data-id="${d.id}">${d.email||''}</td>
-          <td class="px-3 py-2" data-field="address"    data-id="${d.id}">${d.address||''}</td>
-          <td class="px-3 py-2 whitespace-nowrap">
-            <button class="text-blue-600 hover:underline mr-2" data-action="receipt" data-id="${d.id}">Receipt</button>
-            <button class="text-amber-700 hover:underline mr-2" data-action="edit" data-id="${d.id}">Edit</button>
-            <button class="text-green-700 hover:underline mr-2 hidden" data-action="save" data-id="${d.id}">Save</button>
-            <button class="text-gray-600 hover:underline mr-2 hidden" data-action="cancel" data-id="${d.id}">Cancel</button>
-            <button class="text-red-600 hover:underline" data-action="delete" data-id="${d.id}">Delete</button>
-          </td>
-        `;
-        tableBody.appendChild(tr);
-      });
-      recordsCount.textContent = `${filtered.length} record(s) shown`;
-      updateAnalyticsCards();
-    }
-
-    function renderAfterFilters() { applyClientFilters(); renderTable(); }
-
-    // ===== Row Edit/Save/Cancel/Actions =====
-    tableBody.addEventListener('click', async (e)=>{
-      const btn = e.target.closest('button'); if (!btn) return;
-      const id = btn.getAttribute('data-id');
-      const action = btn.getAttribute('data-action');
-      const donation = allDonations.find(x=>x.id===id); if (!donation) return;
-
-      if (action==='receipt') {
-        generateReceiptPDF(donation);
-        return;
-      }
-      if (action==='delete') {
-        const ok = confirm(`Delete donation ${donation.transactionId}?`);
-        if (!ok) return;
-        await donationsCol().doc(id).delete();
-        await refreshAll();
-        renderAfterFilters();
-        return;
-      }
-      if (action==='edit') {
-        enterEditMode(id);
-        return;
-      }
-      if (action==='cancel') {
-        exitEditMode(id, true); // revert
-        return;
-      }
-      if (action==='save') {
-        await saveRow(id);
-        return;
-      }
-    });
-
-    function enterEditMode(id) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
-      if (!row) return;
-      row.querySelectorAll('[data-field]').forEach(td=>{
-        const field = td.getAttribute('data-field');
-        const val = td.textContent.trim();
-
-        // Turn into inputs (keep simple)
-        if (field === 'dateTimeISO') {
-          // Convert "YYYY-MM-DDTHH:mm:ss+05:30" -> "YYYY-MM-DDTHH:mm"
-          const v = (val||'').slice(0,16);
-          td.innerHTML = `<input class="w-52 p-1 border rounded" type="datetime-local" value="${v}" />`;
-        } else if (field === 'amount') {
-          td.innerHTML = `<input class="w-24 p-1 border rounded" type="number" step="1" min="0" value="${val||0}" />`;
-        } else if (field === 'paymentMethod') {
-          td.innerHTML = `
-            <select class="p-1 border rounded">
-              <option ${val==='Cash'?'selected':''}>Cash</option>
-              <option ${val==='UPI'?'selected':''}>UPI</option>
-              <option ${val==='Bank Transfer'?'selected':''}>Bank Transfer</option>
-            </select>`;
-        } else if (field === 'event') {
-          // Build a select of all events (show current selected by name)
-          const options = allEvents.map(ev => `<option ${ev.name===val?'selected':''}>${ev.name}</option>`).join('');
-          td.innerHTML = `<select class="p-1 border rounded">${options}</select>`;
-        } else {
-          td.innerHTML = `<input class="w-48 p-1 border rounded" type="text" value="${val}" />`;
-        }
-        td.classList.add('editing');
-      });
-      toggleRowButtons(row, {editing:true});
-    }
-
-    function exitEditMode(id, revert=false) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
-      if (!row) return;
-      row.querySelectorAll('[data-field]').forEach(td=>{
-        if (revert) {
-          // restore from allDonations (truth)
-          const field = td.getAttribute('data-field');
-          const d = allDonations.find(x=>x.id===id);
-          td.textContent = field==='dateTimeISO' ? d.dateTimeISO :
-                           field==='donorName'  ? (d.donorName||'') :
-                           field==='amount'     ? (d.amount||'') :
-                           field==='event'      ? (d.event||'') :
-                           field==='paymentMethod'? (d.paymentMethod||'') :
-                           field==='phone'      ? (d.phone||'') :
-                           field==='email'      ? (d.email||'') :
-                           field==='address'    ? (d.address||'') : '';
-        } else {
-          // keep whatever is there (already updated)
-        }
-        td.classList.remove('editing');
-      });
-      toggleRowButtons(row, {editing:false});
-    }
-
-    function toggleRowButtons(row, {editing}) {
-      row.querySelectorAll('[data-action="edit"]').forEach(b=>b.classList.toggle('hidden', editing));
-      row.querySelectorAll('[data-action="save"]').forEach(b=>b.classList.toggle('hidden', !editing));
-      row.querySelectorAll('[data-action="cancel"]').forEach(b=>b.classList.toggle('hidden', !editing));
-      row.querySelectorAll('[data-action="delete"]').forEach(b=>b.classList.toggle('hidden', editing));
-      row.querySelectorAll('[data-action="receipt"]').forEach(b=>b.classList.toggle('hidden', editing));
-    }
-
-    async function saveRow(id) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
-      if (!row) return;
-      const getVal = (field) => {
-        const td = row.querySelector(`[data-field="${field}"][data-id="${id}"]`);
-        if (!td) return '';
-        const input = td.querySelector('input,select');
-        if (!input) return td.textContent.trim();
-        let v = input.value;
-        if (field==='dateTimeISO') v = inputToISTISO(input.value);
-        if (field==='amount') v = Number(v||0);
-        return v;
+    function addDonation() {
+      const donation = {
+        id: "TRX-" + String(transactionCounter).padStart(3, '0'),
+        date: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        donor: document.getElementById("donorName").value,
+        amount: parseFloat(document.getElementById("amount").value),
+        event: document.getElementById("event").value,
+        payment: document.getElementById("paymentMethod").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        address: document.getElementById("address").value
       };
-
-      const updated = {
-        dateTimeISO: getVal('dateTimeISO'),
-        donorName: getVal('donorName'),
-        amount: getVal('amount'),
-        event: getVal('event'),
-        paymentMethod: getVal('paymentMethod'),
-        phone: getVal('phone'),
-        email: getVal('email'),
-        address: getVal('address'),
-      };
-
-      // keep eventId consistent if event name matches existing
-      const matchEv = allEvents.find(ev => ev.name === updated.event);
-      if (matchEv) updated.eventId = matchEv.id;
-
-      // basic validations
-      if (!updated.donorName) return alert('Donor name is required');
-      if (!updated.amount || updated.amount <= 0) return alert('Amount must be > 0');
-      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+05:30$/.test(updated.dateTimeISO)) {
-        return alert('Invalid IST datetime. Example: 2025-08-17T13:57:00+05:30');
-      }
-
-      await donationsCol().doc(id).update(updated);
-      // update local cache
-      const idx = allDonations.findIndex(x=>x.id===id);
-      if (idx>-1) allDonations[idx] = { ...allDonations[idx], ...updated };
-
-      // re-render row in view mode
-      exitEditMode(id, /*revert*/ false);
-      // rewrite the cells with fresh values
-      const d = allDonations.find(x=>x.id===id);
-      row.querySelector(`[data-field="dateTimeISO"]`).textContent = d.dateTimeISO;
-      row.querySelector(`[data-field="donorName"]`).textContent  = d.donorName||'';
-      row.querySelector(`[data-field="amount"]`).textContent     = d.amount||'';
-      row.querySelector(`[data-field="event"]`).textContent      = d.event||'';
-      row.querySelector(`[data-field="paymentMethod"]`).textContent = d.paymentMethod||'';
-      row.querySelector(`[data-field="phone"]`).textContent      = d.phone||'';
-      row.querySelector(`[data-field="email"]`).textContent      = d.email||'';
-      row.querySelector(`[data-field="address"]`).textContent    = d.address||'';
-
-      updateAnalyticsCards();
+      donations.push(donation);
+      transactionCounter++;
+      renderDonations();
+      updateAnalytics();
+      generateReceipt(donation);
+      document.getElementById("donationForm").reset();
     }
 
-    // ================== Analytics ==================
-    const statTotalCount = document.getElementById('statTotalCount');
-    const statTotalAmount = document.getElementById('statTotalAmount');
-    const statToday = document.getElementById('statToday');
-    const statByEvent = document.getElementById('statByEvent');
-
-    function updateAnalyticsCards() {
-      const totalCount = filtered.length;
-      const totalAmount = filtered.reduce((s,d)=>s+Number(d.amount||0),0);
-      statTotalCount.textContent = totalCount;
-      statTotalAmount.textContent = '₹' + formatINR(totalAmount);
-
-      const today = toISTISOString().slice(0,10);
-      let tc=0, ta=0;
-      const byEvent = {};
-      filtered.forEach(d=>{
-        if ((d.dateTimeISO||'').slice(0,10)===today) { tc++; ta+=Number(d.amount||0); }
-        const ev = d.event||'Other';
-        byEvent[ev]=(byEvent[ev]||0)+1;
+    function renderDonations() {
+      const tbody = document.getElementById("donationTable");
+      tbody.innerHTML = "";
+      donations.forEach(d => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="border p-2">${d.id}</td>
+            <td class="border p-2">${d.date}</td>
+            <td class="border p-2">${d.donor}</td>
+            <td class="border p-2">₹${d.amount}</td>
+            <td class="border p-2">${d.event}</td>
+            <td class="border p-2">${d.payment}</td>
+            <td class="border p-2">
+              <button onclick='generateReceipt(${JSON.stringify(d)})' class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Receipt</button>
+            </td>
+          </tr>`;
       });
-      statToday.textContent = `${tc} (₹${formatINR(ta)})`;
-      statByEvent.innerHTML = Object.entries(byEvent).sort().map(([k,v])=>`${k}: ${v}`).join(' | ') || '-';
     }
 
-    // ================== CSV & PDF Report ==================
-    document.getElementById('downloadCSV').addEventListener('click', ()=>{
-      const headers = ['Transaction ID','Date Time (IST)','Donor Name','Amount (₹)','Event','Payment Method','Phone','Email','Address'];
-      const lines = [headers.join(',')];
-      filtered.forEach(d=>{
-        const vals = [
-          d.transactionId, d.dateTimeISO, d.donorName||'', d.amount, d.event||'',
-          d.paymentMethod||'', d.phone||'', d.email||'', (d.address||'').replace(/[\r\n,]+/g,' ')
-        ];
-        lines.push(vals.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+    function renderEvents() {
+      const ul = document.getElementById("eventList");
+      ul.innerHTML = "";
+      events.forEach(e => {
+        ul.innerHTML += <li>${e}</li>;
       });
-      const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob); const a=document.createElement('a');
-      a.href=url; a.download='Donation_Report.csv'; a.click(); URL.revokeObjectURL(url);
-    });
+    }
 
-    document.getElementById('downloadPDF').addEventListener('click', ()=>{
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit:'mm', format:'a4' });
-      let y=12;
-
-      if (logoDataUrl) {
-        // width 24mm, keep aspect; x centered approx 10->200 width page. place at x=10 to 34 width
-        doc.addImage(logoDataUrl, 'JPEG', 10, 8, 18, 18, undefined, 'FAST');
-        y = 12;
+    function addEvent() {
+      const e = document.getElementById("newEvent").value;
+      if (e && !events.includes(e)) {
+        events.push(e);
+        renderEvents();
       }
-      doc.setFontSize(14);
-      doc.text('Navyuvak Samiti (Kamalpur) – Donation Report', 32, 16);
-      doc.setFontSize(10);
-      doc.text('Filtered Export', 32, 22);
+      document.getElementById("newEvent").value = "";
+    }
 
-      y = 30;
-      const totalAmount = filtered.reduce((s,d)=>s+Number(d.amount||0),0);
-      doc.text(`Total Donations: ${filtered.length}`, 10, y); y+=5;
-      doc.text(`Total Amount: INR ${formatINR(totalAmount)}`, 10, y); y+=7;
+    function updateAnalytics() {
+      document.getElementById("totalDonations").innerText = donations.length;
+      document.getElementById("totalAmount").innerText = donations.reduce((a, b) => a + b.amount, 0);
+    }
 
-      doc.setFontSize(9);
-      doc.text('TxnID', 10, y); doc.text('Date(IST)', 32, y); doc.text('Donor', 86, y); doc.text('₹', 142, y); doc.text('Event', 158, y); y+=4;
-      doc.line(10,y,200,y); y+=2;
+    function clearData() {
+      if (confirm("Are you sure you want to clear all data?")) {
+        donations = [];
+        transactionCounter = 1;
+        renderDonations();
+        updateAnalytics();
+      }
+    }
 
-      filtered.forEach(d=>{
-        if (y>285){ doc.addPage(); y=10; }
-        doc.text(String(d.transactionId||''),10,y);
-        doc.text(String(d.dateTimeISO||''),32,y);
-        doc.text(String((d.donorName||'').slice(0,24)),86,y);
-        doc.text(String(formatINR(d.amount||0)),142,y,{ align:'right' });
-        doc.text(String((d.event||'').slice(0,24)),158,y);
-        y+=5;
-      });
-
-      doc.save('Donation_Report.pdf');
-    });
-
-    // ================== Receipt PDF (58mm friendly) ==================
-    function generateReceiptPDF(d) {
+    // -------- Professional Receipt Design --------
+    async function generateReceipt(donation) {
       const { jsPDF } = window.jspdf;
-      // 58mm wide ticket
-      const doc = new jsPDF({ unit:'mm', format:[58, 150] });
-      let y=6;
+      const doc = new jsPDF();
 
       // Logo
-      if (logoDataUrl) {
-        // centered ~ 50mm printable width (4 to 54)
-        const w = 18, x = (58 - w)/2;
-        doc.addImage(logoDataUrl, 'JPEG', x, y, w, w, undefined, 'FAST'); // square-ish
-        y += w + 2;
-      }
+      const logo = new Image();
+      logo.src = "nsk.jpg";
+      await new Promise(res => { logo.onload = res; });
+      doc.addImage(logo, "JPEG", 80, 10, 50, 30);
 
-      doc.setFontSize(11); doc.text('Navyuvak Samiti (Kamalpur)', 4, y); y+=5;
-      doc.setFontSize(9);  doc.text('Donation Receipt', 4, y); y+=3;
-      doc.line(4,y,54,y); y+=4;
+      // Header
+      doc.setFontSize(16);
+      doc.text("Navyuvak Samiti (Kamalpur)", 105, 50, { align: "center" });
+      doc.setFontSize(14);
+      doc.text("DONATION RECEIPT", 105, 58, { align: "center" });
+      doc.line(20, 62, 190, 62);
 
-      function row(label,val){ doc.setFontSize(8); doc.text(`${label}:`,4,y); doc.text(String(val||'-'), 26, y); y+=4; }
+      // Receipt Info
+      doc.setFontSize(11);
+      doc.text(Receipt No: ${donation.id}, 20, 72);
+      doc.text(Date: ${donation.date}, 20, 80);
 
-      row('Receipt No.', d.transactionId);
-      row('Date (IST)', d.dateTimeISO);
-      row('Donor Name', d.donorName);
-      row('Amount (INR)', `₹${formatINR(d.amount)}`);
-      row('Purpose', d.event);
-      row('Payment Method', d.paymentMethod);
-      if (d.phone) row('Phone', d.phone);
-      if (d.email) row('Email', d.email);
-      if (d.address) row('Address', d.address);
+      // Donor Info
+      doc.text(Donor: ${donation.donor}, 20, 95);
+      if (donation.phone) doc.text(Phone: ${donation.phone}, 20, 103);
+      if (donation.email) doc.text(Email: ${donation.email}, 20, 111);
+      if (donation.address) doc.text(Address: ${donation.address}, 20, 119);
 
-      y+=2; doc.line(4,y,54,y); y+=4;
-      doc.setFontSize(7);
-      doc.text('Mobile: 9534866694', 4, y); y+=4;
-      doc.text('Email: navyuwaksamitikamalpur@gmail.com', 4, y); y+=4;
-      doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 4, y); y+=6;
+      // Donation Info
+      doc.text(Purpose: ${donation.event}, 20, 134);
+      doc.text(Payment Method: ${donation.payment}, 20, 142);
 
-      doc.setFontSize(8);
-      doc.text(`Thank You for Your Donation of INR ${formatINR(d.amount)}!`, 4, y);
+      // Amount Highlight
+      doc.setFontSize(18);
+      doc.text(INR ₹${donation.amount}, 105, 160, { align: "center" });
 
-      doc.save(`Receipt_${d.transactionId}.pdf`);
-    }
+      // Footer
+      doc.setFontSize(10);
+      doc.line(20, 170, 190, 170);
+      doc.text("Mobile: 9534866694", 20, 180);
+      doc.text("Email: navyuwaksamitikamalpur@gmail.com", 20, 186);
+      doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 20, 192);
+      doc.setFontSize(12);
+      doc.text("🙏 Thank You for Your Kind Donation 🙏", 105, 205, { align: "center" });
 
-    // ================== Events ==================
-    const eventSelect = document.getElementById('event');
-    const filterEventSelect = document.getElementById('filterEvent');
-    const eventsTableBody = document.getElementById('eventsTableBody');
-
-    function renderEventsUI(){
-      // donation form event list (only Active)
-      eventSelect.innerHTML = '';
-      const active = allEvents.filter(e=>e.status==='Active');
-      if (active.length===0) {
-        const opt = document.createElement('option');
-        opt.value = ''; opt.textContent = 'No active events';
-        eventSelect.appendChild(opt);
-      } else {
-        active.forEach(e=>{
-          const opt = document.createElement('option');
-          opt.value = e.id; opt.textContent = e.name; eventSelect.appendChild(opt);
-        });
-      }
-      // filter event (All + all events)
-      renderEventsOptionsForFilters();
-
-      // table
-      eventsTableBody.innerHTML = '';
-      allEvents.forEach(e=>{
-        const tr = document.createElement('tr');
-        tr.className='border-b hover:bg-gray-50';
-        tr.innerHTML = `
-          <td class="px-3 py-2" contenteditable="true" data-etype="name" data-id="${e.id}">${e.name}</td>
-          <td class="px-3 py-2">
-            <select data-etype="status" data-id="${e.id}" class="border rounded px-2 py-1">
-              <option ${e.status==='Active'?'selected':''}>Active</option>
-              <option ${e.status==='Inactive'?'selected':''}>Inactive</option>
-            </select>
-          </td>
-          <td class="px-3 py-2">
-            <button class="text-red-600 hover:underline" data-etype="delete" data-id="${e.id}">Delete</button>
-          </td>
-        `;
-        eventsTableBody.appendChild(tr);
-      });
-    }
-
-    document.getElementById('eventForm').addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const name = document.getElementById('eventName').value.trim();
-      const status = document.getElementById('eventStatus').value;
-      if (!name) return;
-      await eventsCol().add({ name, status, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      document.getElementById('eventName').value='';
-      await refreshAll(); renderAfterFilters();
-    });
-
-    eventsTableBody.addEventListener('change', async (e)=>{
-      const sel = e.target;
-      const id = sel.getAttribute('data-id');
-      const type = sel.getAttribute('data-etype');
-      if (type==='status') {
-        await eventsCol().doc(id).update({ status: sel.value });
-        await refreshAll(); renderAfterFilters();
-      }
-    });
-    eventsTableBody.addEventListener('blur', async (e)=>{
-      const cell = e.target;
-      if (cell.matches('[contenteditable="true"]')) {
-        const id = cell.getAttribute('data-id');
-        const val = cell.innerText.trim();
-        await eventsCol().doc(id).update({ name: val });
-        await refreshAll(); renderAfterFilters();
-      }
-    }, true);
-    eventsTableBody.addEventListener('click', async (e)=>{
-      const btn = e.target.closest('button'); if (!btn) return;
-      const id = btn.getAttribute('data-id');
-      if (btn.getAttribute('data-etype')==='delete') {
-        const ev = allEvents.find(x=>x.id===id);
-        if (!ev) return;
-        if (['Saraswati Puja','General Fund','Other'].includes(ev.name)) {
-          return alert('Default event cannot be deleted.');
-        }
-        const ok = confirm(`Delete event "${ev.name}"?`); if(!ok) return;
-        await eventsCol().doc(id).delete();
-        await refreshAll(); renderAfterFilters();
-      }
-    });
-
-    // ================== Data Management ==================
-    document.getElementById('resetCounterBtn').addEventListener('click', async ()=>{
-      const ok = confirm('Reset transaction counter to 0?'); if(!ok) return;
-      await metaDoc().set({ lastTrx: 0 }, { merge:true });
-      alert('Counter reset.');
-    });
-
-    document.getElementById('restoreDefaultEventsBtn').addEventListener('click', async ()=>{
-      await ensureDefaultEvents();
-      await refreshAll(); renderAfterFilters();
-      alert('Default events restored (will not delete existing).');
-    });
-
-    document.getElementById('clearAllDataBtn').addEventListener('click', async ()=>{
-      const ok = confirm('This will DELETE ALL donations and NON-DEFAULT events. Continue?'); if(!ok) return;
-      // delete donations (batching naive)
-      const dSnap = await donationsCol().get();
-      const batchSize = 400;
-      let idx=0;
-      while (idx<dSnap.size) {
-        const batch = db.batch();
-        dSnap.docs.slice(idx, idx+batchSize).forEach(doc=>batch.delete(doc.ref));
-        await batch.commit(); idx+=batchSize;
-      }
-      // delete events except defaults
-      const defaults = ['Saraswati Puja','General Fund','Other'];
-      const eSnap = await eventsCol().get();
-      idx=0;
-      const toDel = eSnap.docs.filter(doc=>!defaults.includes((doc.data().name||'')));
-      while (idx<toDel.length) {
-        const batch = db.batch();
-        toDel.slice(idx, idx+batchSize).forEach(doc=>batch.delete(doc.ref));
-        await batch.commit(); idx+=batchSize;
-      }
-      await metaDoc().set({ lastTrx: 0 }, { merge:true });
-      await ensureDefaultEvents();
-      await refreshAll(); renderAfterFilters();
-      alert('All donations cleared, counter reset, defaults restored.');
-    });
-
-    // ================== Render Helpers ==================
-    function renderEventsOptionsForFilters() {
-      filterEventSelect.innerHTML = '';
-      const allOpt = document.createElement('option'); allOpt.value=''; allOpt.textContent='All Events';
-      filterEventSelect.appendChild(allOpt);
-      allEvents.forEach(e=>{
-        const opt = document.createElement('option');
-        opt.value = e.id; opt.textContent = `${e.name} (${e.status})`;
-        filterEventSelect.appendChild(opt);
-      });
+      // Save
+      doc.save(Receipt_${donation.id}.pdf);
     }
   </script>
 </body>
 </html>
-
