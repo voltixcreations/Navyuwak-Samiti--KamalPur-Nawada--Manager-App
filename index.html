@@ -292,18 +292,18 @@
     function toISTISOString(d = new Date()) {
       const utc = d.getTime() + d.getTimezoneOffset()*60000;
       const ist = new Date(utc + 5.5*3600000);
-      return ${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())}:${pad(ist.getSeconds())}+05:30;
+      return `${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())}:${pad(ist.getSeconds())}+05:30`;
     }
     // For datetime-local input value (no seconds, no TZ)
     function istLocalForInput(d = new Date()) {
       const utc = d.getTime() + d.getTimezoneOffset()*60000;
       const ist = new Date(utc + 5.5*3600000);
-      return ${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())};
+      return `${ist.getFullYear()}-${pad(ist.getMonth()+1)}-${pad(ist.getDate())}T${pad(ist.getHours())}:${pad(ist.getMinutes())}`;
     }
     function inputToISTISO(inputVal) {
       // from "YYYY-MM-DDTHH:mm" → add ":00+05:30"
       if (!inputVal) return toISTISOString();
-      return ${inputVal}:00+05:30;
+      return `${inputVal}:00+05:30`;
     }
     function formatINR(n) { return new Intl.NumberFormat('en-IN').format(Number(n||0)); }
 
@@ -449,7 +449,7 @@
           tx.update(metaDoc(), { lastTrx: trxNum });
         }
       });
-      return TRX-${String(trxNum).padStart(3,'0')};
+      return `TRX-${String(trxNum).padStart(3,'0')}`;
     }
 
     // ================== Donation: Table/Filters ==================
@@ -472,7 +472,7 @@
       const ed = endDate.value ? new Date(endDate.value+'T23:59:59Z') : null;
 
       filtered = allDonations.filter(d=>{
-        const hay = ${d.donorName||''} ${d.phone||''} ${d.email||''}.toLowerCase();
+        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}`.toLowerCase();
         if (q && !hay.includes(q)) return false;
         if (ev && d.eventId !== ev) return false;
         const when = new Date(d.dateTimeISO.replace('+05:30','Z'));
@@ -508,7 +508,7 @@
         `;
         tableBody.appendChild(tr);
       });
-      recordsCount.textContent = ${filtered.length} record(s) shown;
+      recordsCount.textContent = `${filtered.length} record(s) shown`;
       updateAnalyticsCards();
     }
 
@@ -526,7 +526,7 @@
         return;
       }
       if (action==='delete') {
-        const ok = confirm(Delete donation ${donation.transactionId}?);
+        const ok = confirm(`Delete donation ${donation.transactionId}?`);
         if (!ok) return;
         await donationsCol().doc(id).delete();
         await refreshAll();
@@ -548,7 +548,7 @@
     });
 
     function enterEditMode(id) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector([data-id="${id}"]));
+      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
       if (!row) return;
       row.querySelectorAll('[data-field]').forEach(td=>{
         const field = td.getAttribute('data-field');
@@ -558,9 +558,9 @@
         if (field === 'dateTimeISO') {
           // Convert "YYYY-MM-DDTHH:mm:ss+05:30" -> "YYYY-MM-DDTHH:mm"
           const v = (val||'').slice(0,16);
-          td.innerHTML = <input class="w-52 p-1 border rounded" type="datetime-local" value="${v}" />;
+          td.innerHTML = `<input class="w-52 p-1 border rounded" type="datetime-local" value="${v}" />`;
         } else if (field === 'amount') {
-          td.innerHTML = <input class="w-24 p-1 border rounded" type="number" step="1" min="0" value="${val||0}" />;
+          td.innerHTML = `<input class="w-24 p-1 border rounded" type="number" step="1" min="0" value="${val||0}" />`;
         } else if (field === 'paymentMethod') {
           td.innerHTML = `
             <select class="p-1 border rounded">
@@ -570,10 +570,10 @@
             </select>`;
         } else if (field === 'event') {
           // Build a select of all events (show current selected by name)
-          const options = allEvents.map(ev => <option ${ev.name===val?'selected':''}>${ev.name}</option>).join('');
-          td.innerHTML = <select class="p-1 border rounded">${options}</select>;
+          const options = allEvents.map(ev => `<option ${ev.name===val?'selected':''}>${ev.name}</option>`).join('');
+          td.innerHTML = `<select class="p-1 border rounded">${options}</select>`;
         } else {
-          td.innerHTML = <input class="w-48 p-1 border rounded" type="text" value="${val}" />;
+          td.innerHTML = `<input class="w-48 p-1 border rounded" type="text" value="${val}" />`;
         }
         td.classList.add('editing');
       });
@@ -581,7 +581,7 @@
     }
 
     function exitEditMode(id, revert=false) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector([data-id="${id}"]));
+      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
       if (!row) return;
       row.querySelectorAll('[data-field]').forEach(td=>{
         if (revert) {
@@ -613,10 +613,10 @@
     }
 
     async function saveRow(id) {
-      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector([data-id="${id}"]));
+      const row = [...tableBody.querySelectorAll('tr')].find(tr => tr.querySelector(`[data-id="${id}"]`));
       if (!row) return;
       const getVal = (field) => {
-        const td = row.querySelector([data-field="${field}"][data-id="${id}"]);
+        const td = row.querySelector(`[data-field="${field}"][data-id="${id}"]`);
         if (!td) return '';
         const input = td.querySelector('input,select');
         if (!input) return td.textContent.trim();
@@ -654,17 +654,17 @@
       if (idx>-1) allDonations[idx] = { ...allDonations[idx], ...updated };
 
       // re-render row in view mode
-      exitEditMode(id, /revert/ false);
+      exitEditMode(id, /*revert*/ false);
       // rewrite the cells with fresh values
       const d = allDonations.find(x=>x.id===id);
-      row.querySelector([data-field="dateTimeISO"]).textContent = d.dateTimeISO;
-      row.querySelector([data-field="donorName"]).textContent  = d.donorName||'';
-      row.querySelector([data-field="amount"]).textContent     = d.amount||'';
-      row.querySelector([data-field="event"]).textContent      = d.event||'';
-      row.querySelector([data-field="paymentMethod"]).textContent = d.paymentMethod||'';
-      row.querySelector([data-field="phone"]).textContent      = d.phone||'';
-      row.querySelector([data-field="email"]).textContent      = d.email||'';
-      row.querySelector([data-field="address"]).textContent    = d.address||'';
+      row.querySelector(`[data-field="dateTimeISO"]`).textContent = d.dateTimeISO;
+      row.querySelector(`[data-field="donorName"]`).textContent  = d.donorName||'';
+      row.querySelector(`[data-field="amount"]`).textContent     = d.amount||'';
+      row.querySelector(`[data-field="event"]`).textContent      = d.event||'';
+      row.querySelector(`[data-field="paymentMethod"]`).textContent = d.paymentMethod||'';
+      row.querySelector(`[data-field="phone"]`).textContent      = d.phone||'';
+      row.querySelector(`[data-field="email"]`).textContent      = d.email||'';
+      row.querySelector(`[data-field="address"]`).textContent    = d.address||'';
 
       updateAnalyticsCards();
     }
@@ -689,8 +689,8 @@
         const ev = d.event||'Other';
         byEvent[ev]=(byEvent[ev]||0)+1;
       });
-      statToday.textContent = ${tc} (₹${formatINR(ta)});
-      statByEvent.innerHTML = Object.entries(byEvent).sort().map(([k,v])=>${k}: ${v}).join(' | ') || '-';
+      statToday.textContent = `${tc} (₹${formatINR(ta)})`;
+      statByEvent.innerHTML = Object.entries(byEvent).sort().map(([k,v])=>`${k}: ${v}`).join(' | ') || '-';
     }
 
     // ================== CSV & PDF Report ==================
@@ -702,7 +702,7 @@
           d.transactionId, d.dateTimeISO, d.donorName||'', d.amount, d.event||'',
           d.paymentMethod||'', d.phone||'', d.email||'', (d.address||'').replace(/[\r\n,]+/g,' ')
         ];
-        lines.push(vals.map(v=>"${String(v).replace(/"/g,'""')}").join(','));
+        lines.push(vals.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
       });
       const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob); const a=document.createElement('a');
@@ -726,8 +726,8 @@
 
       y = 30;
       const totalAmount = filtered.reduce((s,d)=>s+Number(d.amount||0),0);
-      doc.text(Total Donations: ${filtered.length}, 10, y); y+=5;
-      doc.text(Total Amount: INR ${formatINR(totalAmount)}, 10, y); y+=7;
+      doc.text(`Total Donations: ${filtered.length}`, 10, y); y+=5;
+      doc.text(`Total Amount: INR ${formatINR(totalAmount)}`, 10, y); y+=7;
 
       doc.setFontSize(9);
       doc.text('TxnID', 10, y); doc.text('Date(IST)', 32, y); doc.text('Donor', 86, y); doc.text('₹', 142, y); doc.text('Event', 158, y); y+=4;
@@ -765,12 +765,12 @@
       doc.setFontSize(9);  doc.text('Donation Receipt', 4, y); y+=3;
       doc.line(4,y,54,y); y+=4;
 
-      function row(label,val){ doc.setFontSize(8); doc.text(${label}:,4,y); doc.text(String(val||'-'), 26, y); y+=4; }
+      function row(label,val){ doc.setFontSize(8); doc.text(`${label}:`,4,y); doc.text(String(val||'-'), 26, y); y+=4; }
 
       row('Receipt No.', d.transactionId);
       row('Date (IST)', d.dateTimeISO);
       row('Donor Name', d.donorName);
-      row('Amount (INR)', ₹${formatINR(d.amount)});
+      row('Amount (INR)', `₹${formatINR(d.amount)}`);
       row('Purpose', d.event);
       row('Payment Method', d.paymentMethod);
       if (d.phone) row('Phone', d.phone);
@@ -784,9 +784,9 @@
       doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 4, y); y+=6;
 
       doc.setFontSize(8);
-      doc.text(Thank You for Your Donation of INR ${formatINR(d.amount)}!, 4, y);
+      doc.text(`Thank You for Your Donation of INR ${formatINR(d.amount)}!`, 4, y);
 
-      doc.save(Receipt_${d.transactionId}.pdf);
+      doc.save(`Receipt_${d.transactionId}.pdf`);
     }
 
     // ================== Events ==================
@@ -869,7 +869,7 @@
         if (['Saraswati Puja','General Fund','Other'].includes(ev.name)) {
           return alert('Default event cannot be deleted.');
         }
-        const ok = confirm(Delete event "${ev.name}"?); if(!ok) return;
+        const ok = confirm(`Delete event "${ev.name}"?`); if(!ok) return;
         await eventsCol().doc(id).delete();
         await refreshAll(); renderAfterFilters();
       }
@@ -922,7 +922,7 @@
       filterEventSelect.appendChild(allOpt);
       allEvents.forEach(e=>{
         const opt = document.createElement('option');
-        opt.value = e.id; opt.textContent = ${e.name} (${e.status});
+        opt.value = e.id; opt.textContent = `${e.name} (${e.status})`;
         filterEventSelect.appendChild(opt);
       });
     }
