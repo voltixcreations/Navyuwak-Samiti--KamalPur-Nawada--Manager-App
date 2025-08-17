@@ -15,39 +15,51 @@
     .chip { display: inline-block; padding: .25rem .75rem; border-radius: .5rem; background: #eef2ff; font-size: .75rem; }
     .btn-secondary { background: #e5e7eb; }
     .btn-secondary:hover { background: #d1d5db; }
-    /* Mobile-specific styles */
+    /* Enhanced Mobile-specific styles */
     @media (max-width: 640px) {
+      body { font-size: 16px; } /* Base font size for readability */
       .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      table { min-width: 800px; } /* Ensure table scrolls horizontally */
-      input, select { font-size: 16px; } /* Prevent iOS zoom on input focus */
-      .toggle-acc { font-size: 0.9rem; }
-      .chip { font-size: 0.65rem; }
-      .accordion-content { padding: 0.75rem; }
-      .btn { min-height: 44px; } /* Touch-friendly button height */
+      table { min-width: 1000px; } /* Wider min-width for more columns */
+      input, select, button { font-size: 16px; min-height: 48px; } /* Touch-friendly sizes */
+      .toggle-acc { font-size: 1rem; padding: 1rem; }
+      .chip { font-size: 0.7rem; }
+      .accordion-content { padding: 1rem; }
+      .grid { gap: 0.75rem; }
+      .space-y-6 > * + * { margin-top: 1.5rem; }
+      /* Card-like sections for better mobile feel */
+      section { margin-bottom: 1rem; border-radius: 1rem; overflow: hidden; }
+      header { padding: 0.75rem; }
+      .flex-col { flex-direction: column; }
     }
+    /* General improvements */
+    body { font-family: 'Inter', sans-serif; }
+    button { transition: all 0.2s ease; }
+    input:focus, select:focus { ring: 2px solid #3b82f6; }
   </style>
+  <!-- Google Fonts for better typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-50 text-gray-900">
 
   <!-- ============================ LOGIN ============================ -->
-  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
-    <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-8">
-      <div class="text-center mb-6">
-        <img src="nsk.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
-        <h1 class="text-2xl font-bold">🔐 Admin Login</h1>
-        <p class="text-sm text-gray-500">Navyuvak Samiti (Kamalpur)</p>
+  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div class="w-full max-w-sm bg-white shadow-2xl rounded-3xl p-6 sm:p-8 transform transition-all hover:scale-105">
+      <div class="text-center mb-8">
+        <img src="nsk.jpg" alt="Logo" class="mx-auto h-20 w-20 rounded-full object-cover mb-4 shadow-md">
+        <h1 class="text-3xl font-bold text-blue-800">🔐 Admin Login</h1>
+        <p class="text-sm text-gray-600 mt-2">Navyuvak Samiti (Kamalpur)</p>
       </div>
-      <form id="loginForm" class="space-y-4">
+      <form id="loginForm" class="space-y-6">
         <input id="email" type="email" placeholder="Admin Email"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" required>
+               class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base bg-gray-50" required>
         <input id="password" type="password" placeholder="Password"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" required>
+               class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base bg-gray-50" required>
         <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition text-base">
+                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl transition shadow-md">
           Login
         </button>
       </form>
-      <p class="mt-4 text-xs text-center text-gray-500">
+      <p class="mt-6 text-xs text-center text-gray-500">
         Tip: Enable Email/Password auth in Firebase and create your admin user.
       </p>
     </div>
@@ -56,48 +68,48 @@
   <!-- ============================ DASHBOARD ============================ -->
   <section id="dashboardSection" class="hidden">
     <!-- Topbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <header class="bg-white shadow-md sticky top-0 z-10">
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <img src="nsk.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
+          <img src="nsk.jpg" alt="Logo" class="h-12 w-12 rounded-full object-cover shadow">
           <div>
-            <h2 class="text-lg sm:text-xl font-bold">📊 Navyuvak Samiti Kamalpur – Admin Dashboard</h2>
-            <p class="text-xs text-gray-500">Donation Management</p>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-800">📊 Navyuvak Samiti Kamalpur</h2>
+            <p class="text-sm text-gray-600">Admin Dashboard - Donation Management</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span id="userEmail" class="text-xs text-gray-500"></span>
+          <span id="userEmail" class="text-sm text-gray-600"></span>
           <button id="logoutBtn"
-                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">Logout</button>
+                  class="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm shadow">Logout</button>
         </div>
       </div>
     </header>
 
-    <main class="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+    <main class="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
       <!-- ====== Analytics ====== -->
-      <section class="bg-white rounded-xl shadow">
-        <div class="accordion">
-          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>📈 Analytics</span>
-            <span class="chip">Auto-updates with filters</span>
+      <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="accordion open">
+          <button class="w-full text-left px-5 py-4 font-semibold flex justify-between items-center toggle-acc bg-gradient-to-r from-blue-50 to-indigo-50">
+            <span class="text-lg">📈 Analytics</span>
+            <span class="chip bg-blue-100 text-blue-800">Auto-updates</span>
           </button>
-          <div class="accordion-content px-4 sm:px-6 pb-6">
+          <div class="accordion-content px-5 py-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div class="bg-blue-50 p-4 rounded-lg text-center">
-                <div id="statTotalCount" class="text-2xl sm:text-3xl font-bold">0</div>
-                <div class="text-sm text-gray-600">Total Donations</div>
+              <div class="bg-blue-100 p-4 rounded-xl text-center shadow">
+                <div id="statTotalCount" class="text-4xl font-bold text-blue-800">0</div>
+                <div class="text-sm text-gray-700">Total Donations</div>
               </div>
-              <div class="bg-green-50 p-4 rounded-lg text-center">
-                <div id="statTotalAmount" class="text-2xl sm:text-3xl font-bold">₹0</div>
-                <div class="text-sm text-gray-600">Total Amount</div>
+              <div class="bg-green-100 p-4 rounded-xl text-center shadow">
+                <div id="statTotalAmount" class="text-4xl font-bold text-green-800">₹0</div>
+                <div class="text-sm text-gray-700">Total Amount</div>
               </div>
-              <div class="bg-yellow-50 p-4 rounded-lg text-center">
-                <div id="statToday" class="text-2xl sm:text-3xl font-bold">0 (₹0)</div>
-                <div class="text-sm text-gray-600">Today</div>
+              <div class="bg-yellow-100 p-4 rounded-xl text-center shadow">
+                <div id="statToday" class="text-4xl font-bold text-yellow-800">0 (₹0)</div>
+                <div class="text-sm text-gray-700">Today</div>
               </div>
-              <div class="bg-indigo-50 p-4 rounded-lg text-center">
-                <div id="statByEvent" class="text-sm font-mono overflow-y-auto max-h-24"></div>
-                <div class="text-sm text-gray-600 mt-1">Donations by Event</div>
+              <div class="bg-indigo-100 p-4 rounded-xl text-center shadow">
+                <div id="statByEvent" class="text-sm font-mono overflow-y-auto max-h-32 text-indigo-800"></div>
+                <div class="text-sm text-gray-700 mt-2">By Event</div>
               </div>
             </div>
           </div>
@@ -105,90 +117,90 @@
       </section>
 
       <!-- ====== Donation Records ====== -->
-      <section class="bg-white rounded-xl shadow">
+      <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="accordion open">
-          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🧾 Donation Records</span>
-            <span class="chip">Add + Filter + Edit + Export</span>
+          <button class="w-full text-left px-5 py-4 font-semibold flex justify-between items-center toggle-acc bg-gradient-to-r from-green-50 to-emerald-50">
+            <span class="text-lg">🧾 Donation Records</span>
+            <span class="chip bg-green-100 text-green-800">Add/Filter/Edit/Export</span>
           </button>
-          <div class="accordion-content px-4 sm:px-6 pb-6">
+          <div class="accordion-content px-5 py-6">
             <!-- Add Donation -->
-            <div class="bg-gray-50 border rounded-xl p-4 mb-4">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold">➕ Add Donation</h3>
-                <span class="text-xs text-gray-500">IST & Auto TRX ID</span>
+            <div class="bg-gray-100 border border-gray-200 rounded-2xl p-5 mb-5 shadow-inner">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-lg text-green-800">➕ Add Donation</h3>
+                <span class="text-xs text-gray-600">IST & Auto TRX</span>
               </div>
-              <form id="donationForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                <input id="donorName" class="p-3 border rounded-lg" placeholder="Donor Name" required>
-                <input id="amount" type="number" min="1" step="1" class="p-3 border rounded-lg" placeholder="Amount (₹)" required>
-                <select id="event" class="p-3 border rounded-lg" required></select>
-                <select id="paymentMethod" class="p-3 border rounded-lg" required>
+              <form id="donationForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                <input id="donorName" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Donor Name" required>
+                <input id="amount" type="number" min="1" step="1" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Amount (₹)" required>
+                <select id="event" class="p-3 border border-gray-300 rounded-xl bg-white" required></select>
+                <select id="paymentMethod" class="p-3 border border-gray-300 rounded-xl bg-white" required>
                   <option value="Cash">Cash</option>
                   <option value="UPI">UPI</option>
                   <option value="Bank Transfer">Bank Transfer</option>
                 </select>
                 <div class="sm:col-span-2">
-                  <label class="text-xs text-gray-500 block mb-1">Date & Time (IST)</label>
-                  <input id="dateTimeInput" type="datetime-local" class="p-3 border rounded-lg w-full">
+                  <label class="text-xs text-gray-600 block mb-1">Date & Time (IST)</label>
+                  <input id="dateTimeInput" type="datetime-local" class="p-3 border border-gray-300 rounded-xl w-full bg-white">
                 </div>
-                <input id="phone" class="p-3 border rounded-lg" placeholder="Phone (optional)">
-                <input id="emailDonor" type="email" class="p-3 border rounded-lg" placeholder="Email (optional)">
-                <input id="address" class="sm:col-span-2 p-3 border rounded-lg" placeholder="Address (optional)">
+                <input id="phone" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Phone (optional)">
+                <input id="emailDonor" type="email" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Email (optional)">
+                <input id="address" class="sm:col-span-2 p-3 border border-gray-300 rounded-xl bg-white" placeholder="Address (optional)">
                 <button type="submit"
-                        class="sm:col-span-2 md:col-span-5 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">
+                        class="sm:col-span-2 md:col-span-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 rounded-xl shadow">
                   Save Donation
                 </button>
               </form>
             </div>
 
             <!-- Filters -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end mb-3">
-              <input id="searchText" class="p-3 border rounded-lg" placeholder="Search donor / phone / email">
-              <select id="filterEvent" class="p-3 border rounded-lg"></select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end mb-4">
+              <input id="searchText" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Search donor / phone / email">
+              <select id="filterEvent" class="p-3 border border-gray-300 rounded-xl bg-white"></select>
               <div>
-                <label class="text-xs text-gray-500 block mb-1">Start Date (IST)</label>
-                <input id="startDate" type="date" class="p-3 border rounded-lg w-full">
+                <label class="text-xs text-gray-600 block mb-1">Start Date</label>
+                <input id="startDate" type="date" class="p-3 border border-gray-300 rounded-xl w-full bg-white">
               </div>
               <div>
-                <label class="text-xs text-gray-500 block mb-1">End Date (IST)</label>
-                <input id="endDate" type="date" class="p-3 border rounded-lg w-full">
+                <label class="text-xs text-gray-600 block mb-1">End Date</label>
+                <input id="endDate" type="date" class="p-3 border border-gray-300 rounded-xl w-full bg-white">
               </div>
-              <div class="flex gap-2 sm:col-span-2 md:col-span-1">
-                <button id="applyFilters" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-3 rounded-lg">Apply</button>
-                <button id="clearFilters" class="flex-1 btn-secondary text-gray-800 px-3 py-3 rounded-lg">Clear</button>
+              <div class="flex gap-3 sm:col-span-2 md:col-span-1">
+                <button id="applyFilters" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-xl shadow">Apply</button>
+                <button id="clearFilters" class="flex-1 btn-secondary text-gray-800 px-4 py-3 rounded-xl shadow">Clear</button>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-2 mb-3">
+            <div class="flex flex-wrap gap-3 mb-4">
               <button id="downloadCSV"
-                      class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm">
-                Download CSV (filtered)
+                      class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm shadow">
+                CSV (filtered)
               </button>
               <button id="downloadPDF"
-                      class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">
-                Download PDF Report (filtered)
+                      class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2.5 rounded-xl text-sm shadow">
+                PDF Report (filtered)
               </button>
-              <span id="recordsCount" class="text-xs text-gray-500 self-center"></span>
+              <span id="recordsCount" class="text-sm text-gray-600 self-center"></span>
             </div>
 
             <!-- Donation Table -->
-            <div class="table-container border rounded-lg">
-              <table class="min-w-full">
-                <thead class="bg-gray-50 text-xs">
+            <div class="table-container border border-gray-200 rounded-2xl overflow-hidden bg-white shadow">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100 text-xs uppercase">
                   <tr>
-                    <th class="px-3 py-2 text-left">Txn ID</th>
-                    <th class="px-3 py-2 text-left">Date (IST)</th>
-                    <th class="px-3 py-2 text-left">Donor</th>
-                    <th class="px-3 py-2 text-left">₹ Amount</th>
-                    <th class="px-3 py-2 text-left">Event</th>
-                    <th class="px-3 py-2 text-left">Method</th>
-                    <th class="px-3 py-2 text-left">Phone</th>
-                    <th class="px-3 py-2 text-left">Email</th>
-                    <th class="px-3 py-2 text-left">Address</th>
-                    <th class="px-3 py-2 text-left">Actions</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Txn ID</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Date (IST)</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Donor</th>
+                    <th class="px-4 py-3 text-left text-gray-600">₹ Amount</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Event</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Method</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Phone</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Email</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Address</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="donationTableBody" class="text-sm"></tbody>
+                <tbody id="donationTableBody" class="text-sm divide-y divide-gray-200"></tbody>
               </table>
             </div>
           </div>
@@ -196,32 +208,32 @@
       </section>
 
       <!-- ====== Event Management ====== -->
-      <section class="bg-white rounded-xl shadow">
+      <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="accordion">
-          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🎉 Event Management</span>
-            <span class="chip">Active events appear in forms</span>
+          <button class="w-full text-left px-5 py-4 font-semibold flex justify-between items-center toggle-acc bg-gradient-to-r from-purple-50 to-violet-50">
+            <span class="text-lg">🎉 Event Management</span>
+            <span class="chip bg-purple-100 text-purple-800">Active in forms</span>
           </button>
-          <div class="accordion-content px-4 sm:px-6 pb-6">
-            <form id="eventForm" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-              <input id="eventName" class="p-3 border rounded-lg" placeholder="Event Name" required>
-              <select id="eventStatus" class="p-3 border rounded-lg">
+          <div class="accordion-content px-5 py-6">
+            <form id="eventForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+              <input id="eventName" class="p-3 border border-gray-300 rounded-xl bg-white" placeholder="Event Name" required>
+              <select id="eventStatus" class="p-3 border border-gray-300 rounded-xl bg-white">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
-              <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">Add Event</button>
+              <button class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-xl shadow">Add Event</button>
             </form>
 
-            <div class="table-container border rounded-lg">
-              <table class="min-w-full">
-                <thead class="bg-gray-50 text-xs">
+            <div class="table-container border border-gray-200 rounded-2xl overflow-hidden bg-white shadow">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100 text-xs uppercase">
                   <tr>
-                    <th class="px-3 py-2 text-left">Event Name</th>
-                    <th class="px-3 py-2 text-left">Status</th>
-                    <th class="px-3 py-2 text-left">Actions</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Event Name</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Status</th>
+                    <th class="px-4 py-3 text-left text-gray-600">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="eventsTableBody" class="text-sm"></tbody>
+                <tbody id="eventsTableBody" class="text-sm divide-y divide-gray-200"></tbody>
               </table>
             </div>
           </div>
@@ -229,27 +241,27 @@
       </section>
 
       <!-- ====== Data Management ====== -->
-      <section class="bg-white rounded-xl shadow">
+      <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="accordion">
-          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
-            <span>🧹 Data Management</span>
-            <span class="chip">Danger zone</span>
+          <button class="w-full text-left px-5 py-4 font-semibold flex justify-between items-center toggle-acc bg-gradient-to-r from-red-50 to-rose-50">
+            <span class="text-lg">🧹 Data Management</span>
+            <span class="chip bg-red-100 text-red-800">Danger Zone</span>
           </button>
-          <div class="accordion-content px-4 sm:px-6 pb-6">
-            <div class="space-y-3">
+          <div class="accordion-content px-5 py-6">
+            <div class="space-y-4">
               <button id="resetCounterBtn"
-                      class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
+                      class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-xl w-full sm:w-auto shadow">
                 Reset Transaction Counter
               </button>
               <button id="restoreDefaultEventsBtn"
-                      class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
+                      class="bg-sky-500 hover:bg-sky-600 text-white px-5 py-3 rounded-xl w-full sm:w-auto shadow">
                 Restore Default Events
               </button>
               <button id="clearAllDataBtn"
-                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
+                      class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl w-full sm:w-auto shadow">
                 Clear ALL Donations & Non-default Events
               </button>
-              <div class="text-xs text-gray-500">
+              <div class="text-xs text-gray-600">
                 Defaults: "Saraswati Puja", "General Fund", "Other" (Active)
               </div>
             </div>
@@ -423,7 +435,7 @@
 
         await donationsCol().add({
           transactionId, dateTimeISO,
-          donorName, amount, occasion: eventName, eventId,
+          donorName, amount, event: eventName, eventId,
           paymentMethod, phone, email: emailDonor, address,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -490,24 +502,24 @@
       tableBody.innerHTML = '';
       filtered.forEach(d=>{
         const tr = document.createElement('tr');
-        tr.className = 'border-b hover:bg-gray-50';
+        tr.className = 'hover:bg-gray-50';
 
         tr.innerHTML = `
-          <td class="px-3 py-2">${d.transactionId||''}</td>
-          <td class="px-3 py-2" data-field="dateTimeISO" data-id="${d.id}">${d.dateTimeISO||''}</td>
-          <td class="px-3 py-2" data-field="donorName"  data-id="${d.id}">${d.donorName||''}</td>
-          <td class="px-3 py-2" data-field="amount"     data-id="${d.id}">${d.amount||''}</td>
-          <td class="px-3 py-2" data-field="event"      data-id="${d.id}">${d.event||''}</td>
-          <td class="px-3 py-2" data-field="paymentMethod" data-id="${d.id}">${d.paymentMethod||''}</td>
-          <td class="px-3 py-2" data-field="phone"      data-id="${d.id}">${d.phone||''}</td>
-          <td class="px-3 py-2" data-field="email"      data-id="${d.id}">${d.email||''}</td>
-          <td class="px-3 py-2" data-field="address"    data-id="${d.id}">${d.address||''}</td>
-          <td class="px-3 py-2 whitespace-nowrap">
-            <button class="text-blue-600 hover:underline mr-2" data-action="receipt" data-id="${d.id}">Receipt</button>
-            <button class="text-amber-700 hover:underline mr-2" data-action="edit" data-id="${d.id}">Edit</button>
-            <button class="text-green-700 hover:underline mr-2 hidden" data-action="save" data-id="${d.id}">Save</button>
-            <button class="text-gray-600 hover:underline mr-2 hidden" data-action="cancel" data-id="${d.id}">Cancel</button>
-            <button class="text-red-600 hover:underline" data-action="delete" data-id="${d.id}">Delete</button>
+          <td class="px-4 py-3">${d.transactionId||''}</td>
+          <td class="px-4 py-3" data-field="dateTimeISO" data-id="${d.id}">${d.dateTimeISO||''}</td>
+          <td class="px-4 py-3" data-field="donorName"  data-id="${d.id}">${d.donorName||''}</td>
+          <td class="px-4 py-3" data-field="amount"     data-id="${d.id}">${d.amount||''}</td>
+          <td class="px-4 py-3" data-field="event"      data-id="${d.id}">${d.event||''}</td>
+          <td class="px-4 py-3" data-field="paymentMethod" data-id="${d.id}">${d.paymentMethod||''}</td>
+          <td class="px-4 py-3" data-field="phone"      data-id="${d.id}">${d.phone||''}</td>
+          <td class="px-4 py-3" data-field="email"      data-id="${d.id}">${d.email||''}</td>
+          <td class="px-4 py-3" data-field="address"    data-id="${d.id}">${d.address||''}</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <button class="text-blue-600 hover:text-blue-800 mr-2" data-action="receipt" data-id="${d.id}">Receipt</button>
+            <button class="text-amber-600 hover:text-amber-800 mr-2" data-action="edit" data-id="${d.id}">Edit</button>
+            <button class="text-green-600 hover:text-green-800 mr-2 hidden" data-action="save" data-id="${d.id}">Save</button>
+            <button class="text-gray-600 hover:text-gray-800 mr-2 hidden" data-action="cancel" data-id="${d.id}">Cancel</button>
+            <button class="text-red-600 hover:text-red-800" data-action="delete" data-id="${d.id}">Delete</button>
           </td>
         `;
         tableBody.appendChild(tr);
@@ -562,12 +574,12 @@
         if (field === 'dateTimeISO') {
           // Convert "YYYY-MM-DDTHH:mm:ss+05:30" -> "YYYY-MM-DDTHH:mm"
           const v = (val||'').slice(0,16);
-          td.innerHTML = `<input class="w-52 p-1 border rounded" type="datetime-local" value="${v}" />`;
+          td.innerHTML = `<input class="w-full p-1 border rounded" type="datetime-local" value="${v}" />`;
         } else if (field === 'amount') {
-          td.innerHTML = `<input class="w-24 p-1 border rounded" type="number" step="1" min="0" value="${val||0}" />`;
+          td.innerHTML = `<input class="w-full p-1 border rounded" type="number" step="1" min="0" value="${val||0}" />`;
         } else if (field === 'paymentMethod') {
           td.innerHTML = `
-            <select class="p-1 border rounded">
+            <select class="w-full p-1 border rounded">
               <option ${val==='Cash'?'selected':''}>Cash</option>
               <option ${val==='UPI'?'selected':''}>UPI</option>
               <option ${val==='Bank Transfer'?'selected':''}>Bank Transfer</option>
@@ -575,9 +587,9 @@
         } else if (field === 'event') {
           // Build a select of all events (show current selected by name)
           const options = allEvents.map(ev => `<option ${ev.name===val?'selected':''}>${ev.name}</option>`).join('');
-          td.innerHTML = `<select class="p-1 border rounded">${options}</select>`;
+          td.innerHTML = `<select class="w-full p-1 border rounded">${options}</select>`;
         } else {
-          td.innerHTML = `<input class="w-48 p-1 border rounded" type="text" value="${val}" />`;
+          td.innerHTML = `<input class="w-full p-1 border rounded" type="text" value="${val}" />`;
         }
         td.classList.add('editing');
       });
@@ -694,7 +706,7 @@
         byEvent[ev]=(byEvent[ev]||0)+1;
       });
       statToday.textContent = `${tc} (₹${formatINR(ta)})`;
-      statByEvent.innerHTML = Object.entries(byEvent).sort().map(([k,v])=>`${k}: ${v}`).join(' | ') || '-';
+      statByEvent.innerHTML = Object.entries(byEvent).sort().map(([k,v])=>`${k}: ${v}<br>`).join('') || '-';
     }
 
     // ================== CSV & PDF Report ==================
@@ -716,79 +728,105 @@
     document.getElementById('downloadPDF').addEventListener('click', ()=>{
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit:'mm', format:'a4' });
-      let y=12;
+      let y=15;
 
       if (logoDataUrl) {
-        // width 24mm, keep aspect; x centered approx 10->200 width page. place at x=10 to 34 width
-        doc.addImage(logoDataUrl, 'JPEG', 10, 8, 18, 18, undefined, 'FAST');
-        y = 12;
+        doc.addImage(logoDataUrl, 'JPEG', 10, 10, 20, 20, undefined, 'FAST');
+        y = 15;
       }
-      doc.setFontSize(14);
-      doc.text('Navyuvak Samiti (Kamalpur) – Donation Report', 32, 16);
-      doc.setFontSize(10);
-      doc.text('Filtered Export', 32, 22);
+      doc.setFontSize(16);
+      doc.setTextColor(33, 41, 94);
+      doc.text('Navyuvak Samiti (Kamalpur)', 40, 20);
+      doc.setFontSize(12);
+      doc.text('Donation Report - Filtered Export', 40, 27);
 
-      y = 30;
+      y = 35;
       const totalAmount = filtered.reduce((s,d)=>s+Number(d.amount||0),0);
-      doc.text(`Total Donations: ${filtered.length}`, 10, y); y+=5;
-      doc.text(`Total Amount: INR ${formatINR(totalAmount)}`, 10, y); y+=7;
+      doc.setFontSize(11);
+      doc.text(`Total Donations: ${filtered.length}`, 10, y); y+=6;
+      doc.text(`Total Amount: INR ${formatINR(totalAmount)}`, 10, y); y+=10;
 
-      doc.setFontSize(9);
-      doc.text('TxnID', 10, y); doc.text('Date(IST)', 32, y); doc.text('Donor', 86, y); doc.text('₹', 142, y); doc.text('Event', 158, y); y+=4;
-      doc.line(10,y,200,y); y+=2;
+      doc.setFontSize(10);
+      doc.setFillColor(240, 240, 240);
+      doc.rect(10, y-5, 190, 8, 'F');
+      doc.text('TxnID', 12, y); doc.text('Date (IST)', 30, y); doc.text('Donor', 80, y); doc.text('Amount (₹)', 130, y, { align: 'right' }); doc.text('Event', 150, y); y+=8;
+      doc.setLineWidth(0.2);
+      doc.line(10, y-2, 200, y-2); y+=2;
 
       filtered.forEach(d=>{
-        if (y>285){ doc.addPage(); y=10; }
-        doc.text(String(d.transactionId||''),10,y);
-        doc.text(String(d.dateTimeISO||''),32,y);
-        doc.text(String((d.donorName||'').slice(0,24)),86,y);
-        doc.text(String(formatINR(d.amount||0)),142,y,{ align:'right' });
-        doc.text(String((d.event||'').slice(0,24)),158,y);
-        y+=5;
+        if (y>270){ doc.addPage(); y=20; }
+        doc.text(String(d.transactionId||''),12,y);
+        doc.text(String(d.dateTimeISO||''),30,y);
+        doc.text(String((d.donorName||'').slice(0,30)),80,y);
+        doc.text(`₹${formatINR(d.amount||0)}`,130,y, { align: 'right' });
+        doc.text(String((d.event||'').slice(0,25)),150,y);
+        y+=6;
       });
 
       doc.save('Donation_Report.pdf');
     });
 
-    // ================== Receipt PDF (58mm friendly) ==================
+    // ================== Receipt PDF (New Design: Modern, with borders and colors) ==================
     function generateReceiptPDF(d) {
       const { jsPDF } = window.jspdf;
-      // 58mm wide ticket
-      const doc = new jsPDF({ unit:'mm', format:[58, 150] });
-      let y=6;
+      // A5 size for better mobile viewing
+      const doc = new jsPDF({ unit:'mm', format:'a5' });
+      let y=10;
+
+      // Background gradient (simulate with rects)
+      doc.setFillColor(245, 248, 255);
+      doc.rect(0, 0, 148, 210, 'F');
 
       // Logo
       if (logoDataUrl) {
-        // centered ~ 50mm printable width (4 to 54)
-        const w = 18, x = (58 - w)/2;
-        doc.addImage(logoDataUrl, 'JPEG', x, y, w, w, undefined, 'FAST'); // square-ish
-        y += w + 2;
+        const w = 30, x = (148 - w)/2;
+        doc.addImage(logoDataUrl, 'JPEG', x, y, w, w, undefined, 'FAST');
+        y += w + 5;
       }
 
-      doc.setFontSize(11); doc.text('Navyuvak Samiti (Kamalpur)', 4, y); y+=5;
-      doc.setFontSize(9);  doc.text('Donation Receipt', 4, y); y+=3;
-      doc.line(4,y,54,y); y+=4;
+      doc.setFontSize(14);
+      doc.setTextColor(33, 41, 94);
+      doc.text('Navyuvak Samiti (Kamalpur)', 10, y); y+=7;
+      doc.setFontSize(12);
+      doc.text('Donation Receipt', 10, y); y+=5;
+      doc.setDrawColor(200);
+      doc.setLineWidth(0.5);
+      doc.line(10, y, 138, y); y+=10;
 
-      function row(label,val){ doc.setFontSize(8); doc.text(`${label}:`,4,y); doc.text(String(val||'-'), 26, y); y+=4; }
+      // Table-like rows with borders
+      doc.setFontSize(10);
+      doc.setTextColor(0);
+      function row(label, val, isBold=false) {
+        doc.setFillColor(255, 255, 255);
+        doc.rect(10, y-4, 128, 8, 'F');
+        doc.setDrawColor(220);
+        doc.rect(10, y-4, 128, 8);
+        if (isBold) doc.setFont('bold');
+        doc.text(`${label}:`, 12, y);
+        doc.text(String(val||'-'), 50, y);
+        if (isBold) doc.setFont('normal');
+        y+=8;
+      }
 
-      row('Receipt No.', d.transactionId);
+      row('Receipt No.', d.transactionId, true);
       row('Date (IST)', d.dateTimeISO);
       row('Donor Name', d.donorName);
-      row('Amount (INR)', `₹${formatINR(d.amount)}`);
+      row('Amount', `₹${formatINR(d.amount)}`, true);
       row('Purpose', d.event);
       row('Payment Method', d.paymentMethod);
       if (d.phone) row('Phone', d.phone);
       if (d.email) row('Email', d.email);
       if (d.address) row('Address', d.address);
 
-      y+=2; doc.line(4,y,54,y); y+=4;
-      doc.setFontSize(7);
-      doc.text('Mobile: 9534866694', 4, y); y+=4;
-      doc.text('Email: navyuwaksamitikamalpur@gmail.com', 4, y); y+=4;
-      doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 4, y); y+=6;
+      y+=5; doc.setDrawColor(200); doc.line(10, y, 138, y); y+=10;
+      doc.setFontSize(9);
+      doc.setTextColor(100);
+      doc.text('Contact: Mobile: 9534866694 | Email: navyuwaksamitikamalpur@gmail.com', 10, y); y+=5;
+      doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 10, y); y+=10;
 
-      doc.setFontSize(8);
-      doc.text(`Thank You for Your Donation of INR ${formatINR(d.amount)}!`, 4, y);
+      doc.setFontSize(11);
+      doc.setTextColor(34, 197, 94);
+      doc.text(`Thank You for Your Generous Donation!`, 10, y, { maxWidth: 128 });
 
       doc.save(`Receipt_${d.transactionId}.pdf`);
     }
@@ -819,17 +857,17 @@
       eventsTableBody.innerHTML = '';
       allEvents.forEach(e=>{
         const tr = document.createElement('tr');
-        tr.className='border-b hover:bg-gray-50';
+        tr.className='hover:bg-gray-50';
         tr.innerHTML = `
-          <td class="px-3 py-2" contenteditable="true" data-etype="name" data-id="${e.id}">${e.name}</td>
-          <td class="px-3 py-2">
-            <select data-etype="status" data-id="${e.id}" class="border rounded px-2 py-1">
+          <td class="px-4 py-3" contenteditable="true" data-etype="name" data-id="${e.id}">${e.name}</td>
+          <td class="px-4 py-3">
+            <select data-etype="status" data-id="${e.id}" class="border border-gray-300 rounded px-2 py-1 bg-white">
               <option ${e.status==='Active'?'selected':''}>Active</option>
               <option ${e.status==='Inactive'?'selected':''}>Inactive</option>
             </select>
           </td>
-          <td class="px-3 py-2">
-            <button class="text-red-600 hover:underline" data-etype="delete" data-id="${e.id}">Delete</button>
+          <td class="px-4 py-3">
+            <button class="text-red-600 hover:text-red-800" data-etype="delete" data-id="${e.id}">Delete</button>
           </td>
         `;
         eventsTableBody.appendChild(tr);
@@ -905,7 +943,7 @@
       }
       // delete events except defaults
       const defaults = ['Saraswati Puja','General Fund','Other'];
-      const eSnap = await eventsCol()..get();
+      const eSnap = await eventsCol().get();
       idx=0;
       const toDel = eSnap.docs.filter(doc=>!defaults.includes((doc.data().name||'')));
       while (idx<toDel.length) {
