@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Navyuvak Samiti (Kamalpur) – Admin Donation Management</title>
 
   <!-- TailwindCSS CDN -->
@@ -11,17 +11,27 @@
   <style>
     .accordion-content { display: none; }
     .accordion.open .accordion-content { display: block; }
-    td.editing { background:#fffceb; outline:none; }
-    .chip { display:inline-block; padding:.15rem .5rem; border-radius:.5rem; background:#eef2ff; font-size:.75rem; }
-    .btn-secondary { background:#e5e7eb; }
-    .btn-secondary:hover { background:#d1d5db; }
+    td.editing { background: #fffceb; outline: none; }
+    .chip { display: inline-block; padding: .25rem .75rem; border-radius: .5rem; background: #eef2ff; font-size: .75rem; }
+    .btn-secondary { background: #e5e7eb; }
+    .btn-secondary:hover { background: #d1d5db; }
+    /* Mobile-specific styles */
+    @media (max-width: 640px) {
+      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 800px; } /* Ensure table scrolls horizontally */
+      input, select { font-size: 16px; } /* Prevent iOS zoom on input focus */
+      .toggle-acc { font-size: 0.9rem; }
+      .chip { font-size: 0.65rem; }
+      .accordion-content { padding: 0.75rem; }
+      .btn { min-height: 44px; } /* Touch-friendly button height */
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
   <!-- ============================ LOGIN ============================ -->
-  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-8">
       <div class="text-center mb-6">
         <img src="nsk.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
         <h1 class="text-2xl font-bold">🔐 Admin Login</h1>
@@ -29,11 +39,11 @@
       </div>
       <form id="loginForm" class="space-y-4">
         <input id="email" type="email" placeholder="Admin Email"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" required>
         <input id="password" type="password" placeholder="Password"
-               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" required>
         <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition">
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition text-base">
           Login
         </button>
       </form>
@@ -47,42 +57,42 @@
   <section id="dashboardSection" class="hidden">
     <!-- Topbar -->
     <header class="bg-white shadow-sm sticky top-0 z-10">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <img src="nsk.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
           <div>
-            <h2 class="text-xl font-bold">📊 Navyuvak Samiti Kamalpur – Admin Dashboard</h2>
+            <h2 class="text-lg sm:text-xl font-bold">📊 Navyuvak Samiti Kamalpur – Admin Dashboard</h2>
             <p class="text-xs text-gray-500">Donation Management</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
           <span id="userEmail" class="text-xs text-gray-500"></span>
           <button id="logoutBtn"
-                  class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm">Logout</button>
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">Logout</button>
         </div>
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-4 space-y-6">
+    <main class="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
       <!-- ====== Analytics ====== -->
       <section class="bg-white rounded-xl shadow">
         <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
+          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
             <span>📈 Analytics</span>
             <span class="chip">Auto-updates with filters</span>
           </button>
-          <div class="accordion-content px-6 pb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="accordion-content px-4 sm:px-6 pb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div class="bg-blue-50 p-4 rounded-lg text-center">
-                <div id="statTotalCount" class="text-3xl font-bold">0</div>
+                <div id="statTotalCount" class="text-2xl sm:text-3xl font-bold">0</div>
                 <div class="text-sm text-gray-600">Total Donations</div>
               </div>
               <div class="bg-green-50 p-4 rounded-lg text-center">
-                <div id="statTotalAmount" class="text-3xl font-bold">₹0</div>
+                <div id="statTotalAmount" class="text-2xl sm:text-3xl font-bold">₹0</div>
                 <div class="text-sm text-gray-600">Total Amount</div>
               </div>
               <div class="bg-yellow-50 p-4 rounded-lg text-center">
-                <div id="statToday" class="text-3xl font-bold">0 (₹0)</div>
+                <div id="statToday" class="text-2xl sm:text-3xl font-bold">0 (₹0)</div>
                 <div class="text-sm text-gray-600">Today</div>
               </div>
               <div class="bg-indigo-50 p-4 rounded-lg text-center">
@@ -97,48 +107,42 @@
       <!-- ====== Donation Records ====== -->
       <section class="bg-white rounded-xl shadow">
         <div class="accordion open">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
+          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
             <span>🧾 Donation Records</span>
             <span class="chip">Add + Filter + Edit + Export</span>
           </button>
-          <div class="accordion-content px-6 pb-6">
+          <div class="accordion-content px-4 sm:px-6 pb-6">
             <!-- Add Donation -->
             <div class="bg-gray-50 border rounded-xl p-4 mb-4">
               <div class="flex items-center justify-between mb-2">
                 <h3 class="font-semibold">➕ Add Donation</h3>
                 <span class="text-xs text-gray-500">IST & Auto TRX ID</span>
               </div>
-              <form id="donationForm" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+              <form id="donationForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                 <input id="donorName" class="p-3 border rounded-lg" placeholder="Donor Name" required>
                 <input id="amount" type="number" min="1" step="1" class="p-3 border rounded-lg" placeholder="Amount (₹)" required>
-
                 <select id="event" class="p-3 border rounded-lg" required></select>
-
                 <select id="paymentMethod" class="p-3 border rounded-lg" required>
                   <option value="Cash">Cash</option>
                   <option value="UPI">UPI</option>
                   <option value="Bank Transfer">Bank Transfer</option>
                 </select>
-
-                <!-- Auto-filled IST Date/Time, editable -->
-                <div class="md:col-span-2">
+                <div class="sm:col-span-2">
                   <label class="text-xs text-gray-500 block mb-1">Date & Time (IST)</label>
                   <input id="dateTimeInput" type="datetime-local" class="p-3 border rounded-lg w-full">
                 </div>
-
                 <input id="phone" class="p-3 border rounded-lg" placeholder="Phone (optional)">
                 <input id="emailDonor" type="email" class="p-3 border rounded-lg" placeholder="Email (optional)">
-                <input id="address" class="md:col-span-2 p-3 border rounded-lg" placeholder="Address (optional)">
-
+                <input id="address" class="sm:col-span-2 p-3 border rounded-lg" placeholder="Address (optional)">
                 <button type="submit"
-                        class="md:col-span-5 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">
+                        class="sm:col-span-2 md:col-span-5 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">
                   Save Donation
                 </button>
               </form>
             </div>
 
             <!-- Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end mb-3">
               <input id="searchText" class="p-3 border rounded-lg" placeholder="Search donor / phone / email">
               <select id="filterEvent" class="p-3 border rounded-lg"></select>
               <div>
@@ -149,7 +153,7 @@
                 <label class="text-xs text-gray-500 block mb-1">End Date (IST)</label>
                 <input id="endDate" type="date" class="p-3 border rounded-lg w-full">
               </div>
-              <div class="flex gap-2">
+              <div class="flex gap-2 sm:col-span-2 md:col-span-1">
                 <button id="applyFilters" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-3 rounded-lg">Apply</button>
                 <button id="clearFilters" class="flex-1 btn-secondary text-gray-800 px-3 py-3 rounded-lg">Clear</button>
               </div>
@@ -168,7 +172,7 @@
             </div>
 
             <!-- Donation Table -->
-            <div class="overflow-x-auto border rounded-lg">
+            <div class="table-container border rounded-lg">
               <table class="min-w-full">
                 <thead class="bg-gray-50 text-xs">
                   <tr>
@@ -194,12 +198,12 @@
       <!-- ====== Event Management ====== -->
       <section class="bg-white rounded-xl shadow">
         <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
+          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
             <span>🎉 Event Management</span>
             <span class="chip">Active events appear in forms</span>
           </button>
-          <div class="accordion-content px-6 pb-6">
-            <form id="eventForm" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div class="accordion-content px-4 sm:px-6 pb-6">
+            <form id="eventForm" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               <input id="eventName" class="p-3 border rounded-lg" placeholder="Event Name" required>
               <select id="eventStatus" class="p-3 border rounded-lg">
                 <option value="Active">Active</option>
@@ -208,7 +212,7 @@
               <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg">Add Event</button>
             </form>
 
-            <div class="overflow-x-auto border rounded-lg">
+            <div class="table-container border rounded-lg">
               <table class="min-w-full">
                 <thead class="bg-gray-50 text-xs">
                   <tr>
@@ -227,22 +231,22 @@
       <!-- ====== Data Management ====== -->
       <section class="bg-white rounded-xl shadow">
         <div class="accordion">
-          <button class="w-full text-left px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
+          <button class="w-full text-left px-4 sm:px-6 py-4 font-semibold flex justify-between items-center toggle-acc">
             <span>🧹 Data Management</span>
             <span class="chip">Danger zone</span>
           </button>
-          <div class="accordion-content px-6 pb-6">
+          <div class="accordion-content px-4 sm:px-6 pb-6">
             <div class="space-y-3">
               <button id="resetCounterBtn"
-                      class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg">
+                      class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
                 Reset Transaction Counter
               </button>
               <button id="restoreDefaultEventsBtn"
-                      class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg">
+                      class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
                 Restore Default Events
               </button>
               <button id="clearAllDataBtn"
-                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg w-full sm:w-auto">
                 Clear ALL Donations & Non-default Events
               </button>
               <div class="text-xs text-gray-500">
@@ -419,7 +423,7 @@
 
         await donationsCol().add({
           transactionId, dateTimeISO,
-          donorName, amount, event: eventName, eventId,
+          donorName, amount, occasion: eventName, eventId,
           paymentMethod, phone, email: emailDonor, address,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -901,7 +905,7 @@
       }
       // delete events except defaults
       const defaults = ['Saraswati Puja','General Fund','Other'];
-      const eSnap = await eventsCol().get();
+      const eSnap = await eventsCol()..get();
       idx=0;
       const toDel = eSnap.docs.filter(doc=>!defaults.includes((doc.data().name||'')));
       while (idx<toDel.length) {
