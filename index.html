@@ -750,7 +750,7 @@
 function generateReceiptPDF(d) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: [58, 200] }); // height extra rakha
-  let y = 6;
+  let y = 9;
 
   // ===== Header =====
   if (logoDataUrl) {
@@ -960,6 +960,7 @@ function generateReceiptPDF(d) {
   </script>
 </body>
 </html>
+
 
 
 
