@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Son of Mithila – Admin Donation Management</title>
+  <title>SON OF MITHILA – Admin Donation Management</title>
 
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
       <div class="text-center mb-6">
         <img src="logo.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
         <h1 class="text-2xl font-bold">🔐 Admin Login</h1>
-        <p class="text-sm text-gray-500">Son of Mithila</p>
+        <p class="text-sm text-gray-500">SON OF MITHILA)</p>
       </div>
       <form id="loginForm" class="space-y-4">
         <input id="email" type="email" placeholder="Admin Email"
@@ -51,7 +51,7 @@
         <div class="flex items-center gap-3">
           <img src="logo.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
           <div>
-            <h2 class="text-xl font-bold">📊 Son of Mithila – Admin Dashboard</h2>
+            <h2 class="text-xl font-bold">📊 SON OF MITHILA– Admin Dashboard</h2>
             <p class="text-xs text-gray-500">Donation Management</p>
           </div>
         </div>
@@ -350,7 +350,7 @@
     // ================== Preload logo for receipts ==================
     async function preloadLogo() {
       try {
-        const img = await loadImage('logo.jpg');
+        const img = await loadImage('nsk.jpg');
         logoDataUrl = imageToDataURL(img);
       } catch (e) {
         console.warn('Logo load failed, receipts will be without logo.', e);
@@ -472,7 +472,7 @@
       const ed = endDate.value ? new Date(endDate.value+'T23:59:59Z') : null;
 
       filtered = allDonations.filter(d=>{
-        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}.toLowerCase();
+        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}`.toLowerCase();
         if (q && !hay.includes(q)) return false;
         if (ev && d.eventId !== ev) return false;
         const when = new Date(d.dateTimeISO.replace('+05:30','Z'));
@@ -720,7 +720,7 @@
         y = 12;
       }
       doc.setFontSize(14);
-      doc.text('Son of Mithila – Donation Report', 32, 16);
+      doc.text('Navyuvak Samiti (Kamalpur) – Donation Report', 32, 16);
       doc.setFontSize(10);
       doc.text('Filtered Export', 32, 22);
 
@@ -761,7 +761,7 @@
         y += w + 2;
       }
 
-      doc.setFontSize(11); doc.text('Son of Mithila', 4, y); y+=5;
+      doc.setFontSize(11); doc.text('SON OF MITHILA)', 4, y); y+=5;
       doc.setFontSize(9);  doc.text('Donation Receipt', 4, y); y+=3;
       doc.line(4,y,54,y); y+=4;
 
@@ -770,7 +770,7 @@
       row('Receipt No.', d.transactionId);
       row('Date (IST)', d.dateTimeISO);
       row('Donor Name', d.donorName);
-      row('Amount (INR)', `₹${formatINR(d.amount)}`);
+      row('Amount (INR)', `${formatINR(d.amount)}`);Rupee
       row('Purpose', d.event);
       row('Payment Method', d.paymentMethod);
       if (d.phone) row('Phone', d.phone);
@@ -779,11 +779,12 @@
 
       y+=2; doc.line(4,y,54,y); y+=4;
       doc.setFontSize(7);
+      doc.text('Mobile: 9534866694', 4, y); y+=4;
       doc.text('Email: sonofmithila108@gmail.com', 4, y); y+=4;
-      doc.text('Address: Nawada, Bihar', 4, y); y+=6;
+      doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 4, y); y+=6;
 
       doc.setFontSize(8);
-      doc.text(`Thank You for Your Donation of INR ${formatINR(d.amount)}!`, 4, y);
+      doc.text(`Thank You for Your Donation of  ${formatINR(d.amount)}!`, 4, y); Rupee
 
       doc.save(`Receipt_${d.transactionId}.pdf`);
     }
