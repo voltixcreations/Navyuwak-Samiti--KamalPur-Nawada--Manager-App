@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Navyuvak Samiti (Kamalpur) – Admin Donation Management</title>
+  <title>Son of Mithila – Admin Donation Management</title>
 
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,9 +23,9 @@
   <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
       <div class="text-center mb-6">
-        <img src="nsk.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
+        <img src="logo.jpg" alt="Logo" class="mx-auto h-16 w-16 rounded-full object-cover mb-2">
         <h1 class="text-2xl font-bold">🔐 Admin Login</h1>
-        <p class="text-sm text-gray-500">Navyuvak Samiti (Kamalpur)</p>
+        <p class="text-sm text-gray-500">Son of Mithila</p>
       </div>
       <form id="loginForm" class="space-y-4">
         <input id="email" type="email" placeholder="Admin Email"
@@ -49,9 +49,9 @@
     <header class="bg-white shadow-sm sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="nsk.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
+          <img src="logo.jpg" alt="Logo" class="h-10 w-10 rounded-full object-cover">
           <div>
-            <h2 class="text-xl font-bold">📊 Navyuvak Samiti Kamalpur – Admin Dashboard</h2>
+            <h2 class="text-xl font-bold">📊 Son of Mithila – Admin Dashboard</h2>
             <p class="text-xs text-gray-500">Donation Management</p>
           </div>
         </div>
@@ -350,7 +350,7 @@
     // ================== Preload logo for receipts ==================
     async function preloadLogo() {
       try {
-        const img = await loadImage('nsk.jpg');
+        const img = await loadImage('logo.jpg');
         logoDataUrl = imageToDataURL(img);
       } catch (e) {
         console.warn('Logo load failed, receipts will be without logo.', e);
@@ -372,7 +372,7 @@
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0);
-      return canvas.toDataURL('image/jpeg'); // nsk.jpg
+      return canvas.toDataURL('image/jpeg'); // logo.jpg
     }
 
     // ================== Default Events ==================
@@ -472,7 +472,7 @@
       const ed = endDate.value ? new Date(endDate.value+'T23:59:59Z') : null;
 
       filtered = allDonations.filter(d=>{
-        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}`.toLowerCase();
+        const hay = `${d.donorName||''} ${d.phone||''} ${d.email||''}.toLowerCase();
         if (q && !hay.includes(q)) return false;
         if (ev && d.eventId !== ev) return false;
         const when = new Date(d.dateTimeISO.replace('+05:30','Z'));
@@ -720,7 +720,7 @@
         y = 12;
       }
       doc.setFontSize(14);
-      doc.text('Navyuvak Samiti (Kamalpur) – Donation Report', 32, 16);
+      doc.text('Son of Mithila – Donation Report', 32, 16);
       doc.setFontSize(10);
       doc.text('Filtered Export', 32, 22);
 
@@ -761,7 +761,7 @@
         y += w + 2;
       }
 
-      doc.setFontSize(11); doc.text('Navyuvak Samiti (Kamalpur)', 4, y); y+=5;
+      doc.setFontSize(11); doc.text('Son of Mithila', 4, y); y+=5;
       doc.setFontSize(9);  doc.text('Donation Receipt', 4, y); y+=3;
       doc.line(4,y,54,y); y+=4;
 
@@ -779,9 +779,8 @@
 
       y+=2; doc.line(4,y,54,y); y+=4;
       doc.setFontSize(7);
-      doc.text('Mobile: 9534866694', 4, y); y+=4;
-      doc.text('Email: navyuwaksamitikamalpur@gmail.com', 4, y); y+=4;
-      doc.text('Address: Kamalpur, Nawada, Benipur, Darbhanga', 4, y); y+=6;
+      doc.text('Email: sonofmithila108@gmail.com', 4, y); y+=4;
+      doc.text('Address: Nawada, Bihar', 4, y); y+=6;
 
       doc.setFontSize(8);
       doc.text(`Thank You for Your Donation of INR ${formatINR(d.amount)}!`, 4, y);
