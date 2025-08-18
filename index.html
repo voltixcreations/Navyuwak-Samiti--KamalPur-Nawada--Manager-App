@@ -746,75 +746,69 @@
       doc.save('Donation_Report.pdf');
     });
 
-// ================== Receipt PDF (58mm friendly - Improved Design) ==================
+// ================== Receipt PDF (58mm friendly - Compact Design) ==================
 function generateReceiptPDF(d) {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "mm", format: [58, 150] });
+  const doc = new jsPDF({ unit: "mm", format: [58, 200] }); // height extra rakha
   let y = 6;
 
   // ===== Header =====
   if (logoDataUrl) {
-    const w = 16, x = (58 - w) / 2;
+    const w = 14, x = (58 - w) / 2;
     doc.addImage(logoDataUrl, "JPEG", x, y, w, w, undefined, "FAST");
     y += w + 2;
   }
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.text("SON OF MITHILA", 29, y, { align: "center" }); 
-  y += 5;
+  doc.setFontSize(11);
+  doc.text("SON OF MITHILA", 29, y, { align: "center" });
+  y += 4;
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.text("Donation Receipt", 29, y, { align: "center" });
   y += 3;
 
-  doc.setLineWidth(0.3);
+  doc.setLineWidth(0.2);
   doc.line(4, y, 54, y); 
-  y += 4;
+  y += 3;
 
-  // ===== Helper row function =====
+  // ===== Helper Row =====
   function row(label, val) {
+    doc.setFontSize(7.5);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
     doc.text(`${label}:`, 4, y);
-
     doc.setFont("helvetica", "normal");
-    doc.text(String(val || "-"), 26, y);
+    doc.text(String(val || "-"), 20, y, { maxWidth: 34 }); // wrap safe
     y += 4;
   }
 
   // ===== Receipt Details =====
   row("Receipt No.", d.transactionId);
   row("Date (IST)", d.dateTimeISO);
-  row("Donor Name", d.donorName);
-  row("Amount (INR)", `₹${formatINR(d.amount)}`);
+  row("Name", d.donorName);
+  row("Amount", `₹${formatINR(d.amount)}`);
   row("Purpose", d.event);
-  row("Payment Method", d.paymentMethod);
+  row("Payment", d.paymentMethod);
   if (d.phone) row("Phone", d.phone);
   if (d.email) row("Email", d.email);
   if (d.address) row("Address", d.address);
 
-  // ===== Divider =====
   y += 2;
-  doc.setDrawColor(150);
-  doc.setLineDash([1, 1], 0); 
-  doc.line(4, y, 54, y);
-  doc.setLineDash(); 
-  y += 4;
+  doc.line(4, y, 54, y); 
+  y += 3;
 
   // ===== Contact Info =====
-  doc.setFont("helvetica", "italic");
   doc.setFontSize(7);
-  doc.text("Mobile: 9534866694", 4, y); y += 4;
-  doc.text("Email: navyuwaksamitikamalpur@gmail.com", 4, y); y += 4;
-  doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 4, y); y += 6;
+  doc.text("Mobile: 9534866694", 4, y); y += 3;
+  doc.text("Email: navyuwaksamitikamalpur@gmail.com", 4, y); y += 3;
+  doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 4, y); y += 4;
 
   // ===== Footer =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
+  doc.setFontSize(7.5);
   doc.text(
-    `🙏 Thank You for Your Donation of INR ${formatINR(d.amount)} 🙏`,
+    `Thank You for Your Donation!`,
     29,
     y,
     { align: "center" }
@@ -823,6 +817,7 @@ function generateReceiptPDF(d) {
   // Save PDF
   doc.save(`Receipt_${d.transactionId}.pdf`);
 }
+
 
 
     // ================== Events ==================
@@ -965,6 +960,7 @@ function generateReceiptPDF(d) {
   </script>
 </body>
 </html>
+
 
 
 
