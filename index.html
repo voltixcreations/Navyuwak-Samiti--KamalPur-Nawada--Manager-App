@@ -746,22 +746,27 @@
       doc.save('Donation_Report.pdf');
     });
 
-// ================== Receipt PDF (58mm friendly - Final Version) ==================
+// ================== Receipt PDF (58mm Thermal - Final, Safe INR) ==================
 function generateReceiptPDF(d) {
   const { jsPDF } = window.jspdf;
 
-  // Large height to avoid cut (auto-adjusted later)
-  const doc = new jsPDF({ unit: "mm", format: [58, 250] });
+  // ✅ Currency: "Rs." is 100% safe on thermal printers.
+  // If you EMBED a Unicode font (e.g., Roboto/Noto) in jsPDF, change this to "\u20B9 "
+  const CURRENCY_PREFIX = "Rs. ";
+
+  // Big height to be safe; we'll auto-trim at the end
+  const doc = new jsPDF({ unit: "mm", format: [58, 260] });
   let y = 6;
 
-  // ===== Logo =====
-  if (logoDataUrl) {
-    const w = 14, x = (58 - w) / 2;
-    doc.addImage(logoDataUrl, "JPEG", x, y, w, w, undefined, "FAST");
-    y += w + 6; // extra gap to avoid overlap
+  // ---------- Header Logo ----------
+  if (typeof logoDataUrl !== "undefined" && logoDataUrl) {
+    const logoW = 14;
+    const logoX = (58 - logoW) / 2;
+    doc.addImage(logoDataUrl, "JPEG", logoX, y, logoW, logoW, undefined, "FAST");
+    y += logoW + 6; // extra gap so title never overlaps
   }
 
-  // ===== Heading =====
+  // ---------- Title ----------
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.text("SON OF MITHILA", 29, y, { align: "center" });
@@ -776,56 +781,66 @@ function generateReceiptPDF(d) {
   doc.line(4, y, 54, y);
   y += 3;
 
-  // ===== Row Helper =====
-  function row(label, val) {
+  // ---------- Row Helper ----------
+  function row(label, val, opts = {}) {
+    const maxWidth = opts.maxWidth ?? 34;
+    const value = (val === null || val === undefined || val === "") ? "-" : String(val);
+
     doc.setFontSize(7.5);
     doc.setFont("helvetica", "bold");
     doc.text(`${label}:`, 4, y);
 
     doc.setFont("helvetica", "normal");
-    // wrap text in 34mm space (avoid cutting)
-    doc.text(String(val || "-"), 20, y, { maxWidth: 34 });
+    // wrap within 34mm so nothing cuts off
+    doc.text(value, 20, y, { maxWidth });
     y += 4;
   }
 
-  // ===== Details =====
+  // ---------- Details ----------
   row("Receipt No.", d.transactionId);
   row("Date (IST)", d.dateTimeISO);
   row("Name", d.donorName);
-  row("Amount", "\u20B9" + formatINR(d.amount)); // ✅ Rupee symbol
+  row("Amount", CURRENCY_PREFIX + (typeof formatINR === "function" ? formatINR(d.amount) : String(d.amount)));
   row("Purpose", d.event);
   row("Payment", d.paymentMethod);
-  if (d.phone) row("Phone", d.phone);
-  if (d.email) row("Email", d.email);
-  if (d.address) row("Address", d.address);
+  if (d.phone)  row("Phone",  d.phone);
+  if (d.email)  row("Email",  d.email, { maxWidth: 34 });
+  if (d.address)row("Address",d.address, { maxWidth: 34 });
 
   y += 2;
   doc.line(4, y, 54, y);
   y += 3;
 
-  // ===== Contact Info =====
+  // ---------- Contact Info ----------
   doc.setFontSize(7);
   doc.text("Mobile: 9534866694", 4, y); y += 3;
   doc.text("Email: navyuwaksamitikamalpur@gmail.com", 4, y, { maxWidth: 50 }); y += 3;
   doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 4, y, { maxWidth: 50 }); y += 6;
 
-  // ===== Footer =====
+  // ---------- Footer ----------
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
-  doc.text(
-    `🙏 Thank You for Your Donation of \u20B9${formatINR(d.amount)} 🙏`,
-    29,
-    y,
-    { align: "center" }
-  );
+  const amtText = (typeof formatINR === "function" ? formatINR(d.amount) : String(d.amount));
+  doc.text(`Thank You for Your Donation of ${CURRENCY_PREFIX}${amtText}`, 29, y, { align: "center" });
 
-  // ✅ Auto-adjust page height according to final content
-  const finalHeight = y + 12;
+  // ---------- Auto-trim page height ----------
+  const finalHeight = y + 12; // small bottom padding
   doc.internal.pageSize.height = finalHeight;
 
-  // Save PDF
+  // ---------- Save ----------
   doc.save(`Receipt_${d.transactionId}.pdf`);
 }
+
+/*
+* OPTIONAL: If you want the real "₹" symbol:
+* 1) Convert a Unicode font (e.g., Roboto-Regular.ttf) to base64 using jsPDF fontconverter.
+* 2) Add it like:
+*      doc.addFileToVFS("Roboto-Regular.ttf", "<BASE64_STRING>");
+*      doc.addFont("Roboto-Regular.ttf", "roboto", "normal");
+*      doc.setFont("roboto", "normal");
+* 3) Then set: const CURRENCY_PREFIX = "\u20B9 ";
+* This ensures ₹ renders correctly.
+*/
 
 
 
@@ -969,6 +984,7 @@ function generateReceiptPDF(d) {
   </script>
 </body>
 </html>
+
 
 
 
