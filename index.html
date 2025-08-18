@@ -746,48 +746,53 @@
       doc.save('Donation_Report.pdf');
     });
 
-// ================== Receipt PDF (58mm friendly - Compact Design) ==================
+// ================== Receipt PDF (58mm friendly - Final Version) ==================
 function generateReceiptPDF(d) {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "mm", format: [58, 200] }); // height extra rakha
+
+  // Large height to avoid cut (auto-adjusted later)
+  const doc = new jsPDF({ unit: "mm", format: [58, 250] });
   let y = 6;
 
-  // ===== Header =====
+  // ===== Logo =====
   if (logoDataUrl) {
     const w = 14, x = (58 - w) / 2;
     doc.addImage(logoDataUrl, "JPEG", x, y, w, w, undefined, "FAST");
-    y += w + 2;
+    y += w + 6; // extra gap to avoid overlap
   }
 
+  // ===== Heading =====
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.text("SON OF MITHILA", 29, y, { align: "center" });
-  y += 4;
+  y += 5;
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.text("Donation Receipt", 29, y, { align: "center" });
-  y += 3;
+  y += 4;
 
   doc.setLineWidth(0.2);
-  doc.line(4, y, 54, y); 
+  doc.line(4, y, 54, y);
   y += 3;
 
-  // ===== Helper Row =====
+  // ===== Row Helper =====
   function row(label, val) {
     doc.setFontSize(7.5);
     doc.setFont("helvetica", "bold");
     doc.text(`${label}:`, 4, y);
+
     doc.setFont("helvetica", "normal");
-    doc.text(String(val || "-"), 20, y, { maxWidth: 34 }); // wrap safe
+    // wrap text in 34mm space (avoid cutting)
+    doc.text(String(val || "-"), 20, y, { maxWidth: 34 });
     y += 4;
   }
 
-  // ===== Receipt Details =====
+  // ===== Details =====
   row("Receipt No.", d.transactionId);
   row("Date (IST)", d.dateTimeISO);
   row("Name", d.donorName);
-  row("Amount", `₹${formatINR(d.amount)}`);
+  row("Amount", "\u20B9" + formatINR(d.amount)); // ✅ Rupee symbol
   row("Purpose", d.event);
   row("Payment", d.paymentMethod);
   if (d.phone) row("Phone", d.phone);
@@ -795,24 +800,28 @@ function generateReceiptPDF(d) {
   if (d.address) row("Address", d.address);
 
   y += 2;
-  doc.line(4, y, 54, y); 
+  doc.line(4, y, 54, y);
   y += 3;
 
   // ===== Contact Info =====
   doc.setFontSize(7);
   doc.text("Mobile: 9534866694", 4, y); y += 3;
-  doc.text("Email: navyuwaksamitikamalpur@gmail.com", 4, y); y += 3;
-  doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 4, y); y += 4;
+  doc.text("Email: navyuwaksamitikamalpur@gmail.com", 4, y, { maxWidth: 50 }); y += 3;
+  doc.text("Address: Kamalpur, Nawada, Benipur, Darbhanga", 4, y, { maxWidth: 50 }); y += 6;
 
   // ===== Footer =====
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
   doc.text(
-    `Thank You for Your Donation!`,
+    `🙏 Thank You for Your Donation of \u20B9${formatINR(d.amount)} 🙏`,
     29,
     y,
     { align: "center" }
   );
+
+  // ✅ Auto-adjust page height according to final content
+  const finalHeight = y + 12;
+  doc.internal.pageSize.height = finalHeight;
 
   // Save PDF
   doc.save(`Receipt_${d.transactionId}.pdf`);
@@ -960,6 +969,7 @@ function generateReceiptPDF(d) {
   </script>
 </body>
 </html>
+
 
 
 
